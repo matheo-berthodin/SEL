@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-neutral-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio d'Étude Linéaire - Bac de Français</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JSZip pour la génération de fichiers ZIP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Newsreader', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Scrollbar Minimaliste */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5f5f5;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d4;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a3a3a3;
+        }
+
+        /* Mode Impression */
+        @media print {
+            body {
+                background: white !important;
+                color: #171717 !important;
+                font-size: 10pt;
+            }
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            .print-border-none {
+                border: none !important;
+                padding: 0 !important;
+            }
+            @page {
+                margin: 1.2cm;
+            }
+        }
+        .print-only {
+            display: none;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans text-neutral-800 antialiased bg-neutral-50 selection:bg-neutral-200">
+
+    <!-- Toast Notification Box -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Minimalist Header -->
+    <header class="no-print bg-white border-b border-neutral-200 sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <span class="font-mono text-sm font-bold tracking-tight bg-neutral-900 text-white px-2 py-0.5 rounded">ÉL</span>
+                <h1 class="font-semibold text-sm text-neutral-900 tracking-tight">Bac de Français <span class="text-neutral-400 font-normal">| Studio d'Étude Linéaire</span></h1>
+            </div>
+
+            <!-- Header Actions : Import/Export/Local -->
+            <div class="flex items-center space-x-2">
+                <!-- Chargement de l'exemple -->
+                <button onclick="loadExampleBaudelaire()" title="Charger un exemple (L'Albatros)" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded transition">
+                    <i class="fa-solid fa-lightbulb mr-1.5"></i>
+                    <span class="hidden sm:inline">Exemple</span>
+                </button>
+
+                <!-- Sauvegarde locale forcée -->
+                <button onclick="manualSaveLocal()" title="Sauvegarder dans le navigateur" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
+                    <i class="fa-solid fa-floppy-disk mr-1.5"></i>
+                    <span class="hidden sm:inline">Sauvegarder</span>
+                </button>
+
+                <!-- Exporter ZIP -->
+                <button onclick="exportToZip()" title="Exporter en archive .zip" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
+                    <i class="fa-solid fa-file-zipper mr-1.5 text-neutral-500"></i>
+                    <span>Export .ZIP</span>
+                </button>
+
+                <!-- Importer File (ZIP / JSON) -->
+                <label class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition cursor-pointer">
+                    <i class="fa-solid fa-file-import mr-1.5 text-neutral-500"></i>
+                    <span>Importer</span>
+                    <input type="file" id="import-file-input" accept=".zip,.json" onchange="importProjectFile(event)" class="hidden">
+                </label>
+
+                <!-- Réinitialiser -->
+                <button onclick="createNewStudy()" title="Effacer l'étude actuelle" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200 rounded transition">
+                    <i class="fa-solid fa-trash-can mr-1"></i>
+                </button>
+
+                <!-- Fiche de révision -->
+                <button onclick="switchTab('export')" class="inline-flex items-center px-3 py-1 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded transition shadow-xs ml-1">
+                    <i class="fa-solid fa-file-lines mr-1.5"></i>
+                    <span>Fiche</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
+        
+        <!-- Metadata Header -->
+        <div class="no-print bg-white rounded-lg border border-neutral-200 p-4 mb-6 shadow-2xs">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-[11px] font-mono font-medium uppercase text-neutral-400 mb-1">Titre de l'étude</label>
+                    <input type="text" id="doc-title" placeholder="Saisir le titre..." 
+                           class="w-full text-sm font-medium text-neutral-900 border-b border-neutral-200 focus:border-neutral-900 focus:outline-none py-1 bg-transparent" oninput="autoSave()">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-mono font-medium uppercase text-neutral-400 mb-1">Auteur & Œuvre</label>
+                    <input type="text" id="doc-author-work" placeholder="Saisir l'auteur et l'œuvre..." 
+                           class="w-full text-sm text-neutral-800 border-b border-neutral-200 focus:border-neutral-900 focus:outline-none py-1 bg-transparent" oninput="autoSave()">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-mono font-medium uppercase text-neutral-400 mb-1">Parcours associatif</label>
+                    <input type="text" id="doc-course" placeholder="Saisir le parcours..." 
+                           class="w-full text-sm text-neutral-800 border-b border-neutral-200 focus:border-neutral-900 focus:outline-none py-1 bg-transparent" oninput="autoSave()">
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="no-print flex space-x-1 border-b border-neutral-200 mb-6 overflow-x-auto" id="main-tabs">
+            <button onclick="switchTab('intro')" id="tab-btn-intro" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-neutral-900 text-neutral-900 bg-white flex items-center space-x-2 whitespace-nowrap">
+                <span class="font-mono text-[10px] text-neutral-400">01</span>
+                <span>Introduction</span>
+            </button>
+            <button onclick="switchTab('text')" id="tab-btn-text" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-transparent text-neutral-500 hover:text-neutral-900 flex items-center space-x-2 whitespace-nowrap">
+                <span class="font-mono text-[10px] text-neutral-400">02</span>
+                <span>Texte brut</span>
+            </button>
+            <button onclick="switchTab('analysis')" id="tab-btn-analysis" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-transparent text-neutral-500 hover:text-neutral-900 flex items-center space-x-2 whitespace-nowrap">
+                <span class="font-mono text-[10px] text-neutral-400">03</span>
+                <span>Analyse Linéaire</span>
+            </button>
+            <button onclick="switchTab('conclusion')" id="tab-btn-conclusion" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-transparent text-neutral-500 hover:text-neutral-900 flex items-center space-x-2 whitespace-nowrap">
+                <span class="font-mono text-[10px] text-neutral-400">04</span>
+                <span>Conclusion</span>
+            </button>
+            <button onclick="switchTab('export')" id="tab-btn-export" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-transparent text-neutral-500 hover:text-neutral-900 flex items-center space-x-2 whitespace-nowrap">
+                <i class="fa-solid fa-print text-neutral-400 mr-1"></i>
+                <span>Fiche de révision</span>
+            </button>
+        </nav>
+
+        <!-- TAB 1: INTRODUCTION -->
+        <div id="tab-intro" class="tab-content flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <div class="lg:col-span-7 space-y-4">
+                <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
+                    <label class="block text-xs font-semibold text-neutral-900">1. Présentation de l'auteur</label>
+                    <textarea id="intro-author" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Auteur, dates, siècle, faits biographiques majeurs (ex: Charles Baudelaire, poète du XIXe siècle)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
+                    <label class="block text-xs font-semibold text-neutral-900">2. Présentation de l'œuvre</label>
+                    <textarea id="intro-work" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Titre de l'œuvre, date de parution, genre, thèmes clés (ex: Les Fleurs du Mal, recueil poétique explorant le Spleen et l'Idéal)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
+                    <label class="block text-xs font-semibold text-neutral-900">3. Présentation de l'extrait</label>
+                    <textarea id="intro-extract" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Situation du passage dans l'œuvre, résumé succinct du passage (ex: Poème placé au début de la section Spleen et Idéal)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
+                    <label class="block text-xs font-semibold text-neutral-900">4. Mouvement littéraire et contexte</label>
+                    <textarea id="intro-movement-lit" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Symbolisme, Romantisme, Modernité poétique, contexte historique..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
+                    <label class="block text-xs font-semibold text-neutral-900">5. Problématique</label>
+                    <textarea id="intro-problem" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="En quoi cet extrait montre-t-il... / Dans quelle mesure le poète parvient-il à..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                </div>
+
+                <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
+                    <label class="block text-xs font-semibold text-neutral-900">6. Annonce des mouvements du texte</label>
+                    <textarea id="intro-plan" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Dans un premier mouvement (vers 1 à 8), nous verrons... Puis dans un second mouvement (vers 9 à 16)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                </div>
+            </div>
+
+            <!-- Preview panel -->
+            <div class="lg:col-span-5">
+                <div class="sticky top-20 bg-white p-5 rounded-lg border border-neutral-200 shadow-2xs flex flex-col h-[calc(100vh-120px)] min-h-[400px]">
+                    <div class="flex items-center justify-between pb-3 border-b border-neutral-100 mb-3">
+                        <h3 class="text-xs font-bold text-neutral-900 font-mono uppercase tracking-wider">
+                            Introduction assemblée
+                        </h3>
+                        <button onclick="copyIntroText()" class="text-[11px] text-neutral-600 hover:text-neutral-900 font-medium flex items-center">
+                            <i class="fa-regular fa-copy mr-1"></i> Copier
+                        </button>
+                    </div>
+
+                    <div id="assembled-intro-preview" class="flex-1 overflow-y-auto font-serif text-neutral-800 leading-relaxed text-sm bg-neutral-50/60 p-4 rounded border border-neutral-100">
+                        <p class="text-neutral-400 italic text-center py-12 font-sans text-xs">Remplissez les étapes à gauche pour voir l'introduction s'assembler ici.</p>
+                    </div>
+
+                    <div class="mt-3 pt-2 border-t border-neutral-100 text-[11px] text-neutral-400 flex justify-between font-mono">
+                        <span>Assemblage continu</span>
+                        <span id="intro-word-count">0 mots</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: TEXTE BRUT -->
+        <div id="tab-text" class="tab-content hidden flex-1 flex flex-col">
+            <div class="bg-white p-6 rounded-lg border border-neutral-200 shadow-2xs flex-1 flex flex-col">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold text-neutral-900 font-mono uppercase tracking-wider">
+                        Texte littéraire d'étude
+                    </h3>
+                    <span class="text-[11px] text-neutral-400">Texte brut complet (extrait ou poème)</span>
+                </div>
+                <textarea id="full-text-input" oninput="autoSave()" placeholder="Saisissez ou collez ici le texte littéraire complet..." class="flex-1 w-full min-h-[400px] text-sm font-serif p-4 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none leading-relaxed bg-neutral-50/30"></textarea>
+            </div>
+        </div>
+
+        <!-- TAB 3: ANALYSE LINÉAIRE -->
+        <div id="tab-analysis" class="tab-content hidden flex-1 space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-lg border border-neutral-200">
+                <div>
+                    <h3 class="text-xs font-bold font-mono uppercase tracking-wider text-neutral-900">Éléments de l'analyse linéaire</h3>
+                    <p class="text-xs text-neutral-500">Ajoutez des procédés ou insérez des séparations pour délimiter les mouvements.</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button onclick="addAxisSeparator()" class="px-3 py-1.5 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition flex items-center">
+                        <i class="fa-solid fa-bookmark mr-1.5 text-neutral-500"></i>
+                        <span>+ Changement d'axe / Mouvement</span>
+                    </button>
+                    <button onclick="addProcessRow()" class="px-3 py-1.5 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded transition flex items-center">
+                        <i class="fa-solid fa-plus mr-1.5"></i>
+                        <span>+ Ligne de procédé</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg border border-neutral-200 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-neutral-100 border-b border-neutral-200 text-[11px] font-mono uppercase text-neutral-600">
+                                <th class="p-3 w-1/4">Citation / Passage</th>
+                                <th class="p-3 w-1/3">Procédé & Analyse Grammaticale</th>
+                                <th class="p-3 w-1/3">Interprétation & Effet</th>
+                                <th class="p-2 w-8"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="analysis-rows-container" class="divide-y divide-neutral-200 text-xs">
+                            <!-- Dynamic Rows Loaded Here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: CONCLUSION -->
+        <div id="tab-conclusion" class="tab-content hidden flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-5 rounded-lg border border-neutral-200 shadow-2xs space-y-2">
+                <label class="block text-xs font-bold font-mono uppercase tracking-wider text-neutral-900">Bilan de l'analyse</label>
+                <p class="text-xs text-neutral-400">Répondre à la problématique et reformuler les idées principales.</p>
+                <textarea id="conclusion-summary" rows="8" oninput="autoSave()" placeholder="Pour conclure, cette étude montre que... [Réponse directe à la problématique en synthétisant les mouvements]..." class="w-full text-xs p-3 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none font-serif leading-relaxed"></textarea>
+            </div>
+
+            <div class="bg-white p-5 rounded-lg border border-neutral-200 shadow-2xs space-y-2">
+                <label class="block text-xs font-bold font-mono uppercase tracking-wider text-neutral-900">Ouverture / Élargissement</label>
+                <p class="text-xs text-neutral-400">Proposer un prolongement culturel ou littéraire pertinent.</p>
+                <textarea id="conclusion-opening" rows="8" oninput="autoSave()" placeholder="On pourrait élargir cette réflexion en la rapprochant de..." class="w-full text-xs p-3 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none font-serif leading-relaxed"></textarea>
+            </div>
+        </div>
+
+        <!-- TAB 5: FICHE DE RÉVISION SIMPLIFIÉE -->
+        <div id="tab-export" class="tab-content hidden flex-1 space-y-4">
+            <!-- Toolbar -->
+            <div class="no-print bg-white p-3 rounded-lg border border-neutral-200 flex items-center justify-between">
+                <span class="text-xs font-mono text-neutral-500">Prise de note / Fiche de révision assemblée</span>
+                <div class="flex items-center space-x-2">
+                    <button onclick="copyMarkdown()" class="px-3 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded transition">
+                        <i class="fa-regular fa-copy mr-1"></i> Copier Markdown
+                    </button>
+                    <button onclick="window.print()" class="px-3.5 py-1.5 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded transition">
+                        <i class="fa-solid fa-print mr-1"></i> Imprimer / PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visual Sheet -->
+            <div id="export-sheet" class="bg-white p-8 sm:p-12 rounded-lg border border-neutral-200 max-w-4xl mx-auto text-neutral-900 print-border-none font-serif">
+                <!-- Title Header -->
+                <div class="border-b-2 border-neutral-900 pb-4 mb-6">
+                    <div class="flex justify-between items-baseline">
+                        <h1 id="export-title" class="text-xl font-bold font-sans uppercase tracking-tight text-neutral-900">Titre de l'Étude</h1>
+                        <span id="export-author-work" class="text-xs font-mono text-neutral-600">Auteur - Œuvre</span>
+                    </div>
+                    <div id="export-course" class="text-xs font-mono text-neutral-500 mt-1 italic">Parcours</div>
+                </div>
+
+                <!-- Extrait Brut -->
+                <div id="export-text-section" class="mb-6 hidden">
+                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">Texte de l'extrait</h2>
+                    <div id="export-full-text" class="text-xs text-neutral-700 leading-relaxed whitespace-pre-wrap italic bg-neutral-50 p-3 rounded border border-neutral-100"></div>
+                </div>
+
+                <!-- Introduction -->
+                <div class="mb-6">
+                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">1. Introduction</h2>
+                    <p id="export-intro" class="text-xs text-neutral-800 leading-relaxed text-justify">--</p>
+                </div>
+
+                <!-- Large Single Table -->
+                <div class="mb-6">
+                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-3 border-b border-neutral-200 pb-1">2. Tableau d'Analyse Linéaire</h2>
+                    <table class="w-full text-left border-collapse border border-neutral-300 text-xs font-sans">
+                        <thead>
+                            <tr class="bg-neutral-100 border-b border-neutral-300 font-mono text-[10px] text-neutral-700 uppercase">
+                                <th class="p-2 border-r border-neutral-300 w-1/4">Citation / Passage</th>
+                                <th class="p-2 border-r border-neutral-300 w-1/3">Procédé / Analyse</th>
+                                <th class="p-2 w-5/12">Interprétation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="export-table-body" class="divide-y divide-neutral-300">
+                            <!-- Dynamic Content -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Conclusion -->
+                <div>
+                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">3. Conclusion</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        <div class="p-3 bg-neutral-50 border border-neutral-200 rounded">
+                            <span class="font-mono font-bold uppercase text-[10px] text-neutral-500 block mb-1">Bilan & Réponse à la problématique :</span>
+                            <p id="export-conclusion-summary" class="text-neutral-800 leading-relaxed">--</p>
+                        </div>
+                        <div class="p-3 bg-neutral-50 border border-neutral-200 rounded">
+                            <span class="font-mono font-bold uppercase text-[10px] text-neutral-500 block mb-1">Ouverture :</span>
+                            <p id="export-conclusion-opening" class="text-neutral-800 leading-relaxed">--</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // State Model
+        let studyData = {
+            title: "",
+            authorWork: "",
+            course: "",
+            intro: {
+                author: "",
+                work: "",
+                extract: "",
+                movementLit: "",
+                problem: "",
+                plan: ""
+            },
+            fullText: "",
+            analysisItems: [], // Objects: { type: 'separator'|'process', title: '', quote: '', process: '', effect: '' }
+            conclusion: {
+                summary: "",
+                opening: ""
+            }
+        };
+
+        // App Initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedStudy();
+            lucide.createIcons();
+        });
+
+        // Notifications (Toasts)
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center space-x-2 px-3 py-2 rounded shadow-md text-xs font-medium text-white transition-all transform duration-200 translate-y-2 opacity-0 ${
+                type === 'success' ? 'bg-neutral-900' : type === 'error' ? 'bg-red-600' : 'bg-neutral-700'
+            }`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation'} text-xs"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 200);
+            }, 3000);
+        }
+
+        // Tab Navigation
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('border-neutral-900', 'text-neutral-900', 'bg-white');
+                btn.classList.add('border-transparent', 'text-neutral-500');
+            });
+
+            const activeTab = document.getElementById(`tab-${tabId}`);
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+
+            if (activeTab && activeBtn) {
+                activeTab.classList.remove('hidden');
+                activeBtn.classList.remove('border-transparent', 'text-neutral-500');
+                activeBtn.classList.add('border-neutral-900', 'text-neutral-900', 'bg-white');
+            }
+
+            if (tabId === 'export') {
+                renderExportSheet();
+            }
+        }
+
+        // Introduction Preview
+        function updateIntroPreview() {
+            const author = document.getElementById('intro-author').value.trim();
+            const work = document.getElementById('intro-work').value.trim();
+            const extract = document.getElementById('intro-extract').value.trim();
+            const movementLit = document.getElementById('intro-movement-lit').value.trim();
+            const problem = document.getElementById('intro-problem').value.trim();
+            const plan = document.getElementById('intro-plan').value.trim();
+
+            studyData.intro = { author, work, extract, movementLit, problem, plan };
+
+            const previewContainer = document.getElementById('assembled-intro-preview');
+            const parts = [author, work, extract, movementLit, problem, plan].filter(Boolean);
+            
+            if (parts.length === 0) {
+                previewContainer.innerHTML = `<p class="text-neutral-400 italic text-center py-12 font-sans text-xs">Remplissez les étapes à gauche pour voir l'introduction s'assembler ici.</p>`;
+                document.getElementById('intro-word-count').innerText = "0 mots";
+                return;
+            }
+
+            const fullText = parts.join(" ");
+            previewContainer.innerText = fullText;
+
+            const wordCount = fullText.split(/\s+/).filter(w => w.length > 0).length;
+            document.getElementById('intro-word-count').innerText = `${wordCount} mots`;
+        }
+
+        function copyIntroText() {
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            const fullText = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
+            if (!fullText) return;
+
+            navigator.clipboard.writeText(fullText).then(() => {
+                showToast("Introduction copiée !");
+            });
+        }
+
+        // Analysis Items Logic (Separators + Process Rows)
+        function addAxisSeparator() {
+            studyData.analysisItems.push({
+                type: 'separator',
+                title: 'Nouveau Mouvement / Changement d\'axe'
+            });
+            renderAnalysisTable();
+            autoSave();
+        }
+
+        function addProcessRow() {
+            studyData.analysisItems.push({
+                type: 'process',
+                quote: '',
+                process: '',
+                effect: ''
+            });
+            renderAnalysisTable();
+            autoSave();
+        }
+
+        function removeAnalysisItem(index) {
+            studyData.analysisItems.splice(index, 1);
+            renderAnalysisTable();
+            autoSave();
+        }
+
+        function updateItemField(index, field, value) {
+            if (studyData.analysisItems[index]) {
+                studyData.analysisItems[index][field] = value;
+                autoSave();
+            }
+        }
+
+        function renderAnalysisTable() {
+            const tbody = document.getElementById('analysis-rows-container');
+            tbody.innerHTML = "";
+
+            if (studyData.analysisItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-neutral-400 italic">Aucun procédé ni axe ajouté. Cliquez sur un des boutons ci-dessus pour commencer.</td></tr>`;
+                return;
+            }
+
+            studyData.analysisItems.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+
+                if (item.type === 'separator') {
+                    tr.className = "bg-neutral-900 text-white border-y border-neutral-800";
+                    tr.innerHTML = `
+                        <td colspan="3" class="p-2.5">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-bookmark text-neutral-400 text-xs pl-2"></i>
+                                <input type="text" value="${escapeHtml(item.title)}" 
+                                       oninput="updateItemField(${idx}, 'title', this.value)" 
+                                       placeholder="Nom du mouvement ou de l'axe (ex: Mouvement 1 : La chute de l'albatros)" 
+                                       class="w-full bg-transparent font-mono text-xs font-bold text-white focus:outline-none placeholder-neutral-500">
+                            </div>
+                        </td>
+                        <td class="p-2 text-center align-middle">
+                            <button onclick="removeAnalysisItem(${idx})" class="text-neutral-400 hover:text-white p-1" title="Supprimer cet axe">
+                                <i class="fa-solid fa-times text-xs"></i>
+                            </button>
+                        </td>
+                    `;
+                } else {
+                    tr.className = "hover:bg-neutral-50/60 transition";
+                    tr.innerHTML = `
+                        <td class="p-2 align-top">
+                            <textarea oninput="updateItemField(${idx}, 'quote', this.value)" rows="2" placeholder="Citation ou vers..." class="w-full p-2 border border-neutral-200 rounded font-serif text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.quote)}</textarea>
+                        </td>
+                        <td class="p-2 align-top">
+                            <textarea oninput="updateItemField(${idx}, 'process', this.value)" rows="2" placeholder="Procédé / Figure / Syntaxe..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.process)}</textarea>
+                        </td>
+                        <td class="p-2 align-top">
+                            <textarea oninput="updateItemField(${idx}, 'effect', this.value)" rows="2" placeholder="Interprétation..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.effect)}</textarea>
+                        </td>
+                        <td class="p-2 align-top text-center pt-3">
+                            <button onclick="removeAnalysisItem(${idx})" class="text-neutral-300 hover:text-red-600 p-1 transition" title="Supprimer la ligne">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
+                        </td>
+                    `;
+                }
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Render Revision Sheet
+        function renderExportSheet() {
+            document.getElementById('export-title').innerText = studyData.title || "Titre de l'Étude";
+            document.getElementById('export-author-work').innerText = studyData.authorWork || "Auteur - Œuvre";
+            document.getElementById('export-course').innerText = studyData.course ? `Parcours : ${studyData.course}` : "";
+
+            // Full text
+            const textSec = document.getElementById('export-text-section');
+            if (studyData.fullText && studyData.fullText.trim()) {
+                textSec.classList.remove('hidden');
+                document.getElementById('export-full-text').innerText = studyData.fullText;
+            } else {
+                textSec.classList.add('hidden');
+            }
+
+            // Intro
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            const fullIntro = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
+            document.getElementById('export-intro').innerText = fullIntro || "Aucune introduction renseignée.";
+
+            // Analysis Table with embedded movement separators
+            const tbody = document.getElementById('export-table-body');
+            tbody.innerHTML = "";
+
+            if (studyData.analysisItems.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-neutral-400 italic">Aucune analyse renseignée.</td></tr>`;
+            } else {
+                studyData.analysisItems.forEach(item => {
+                    const tr = document.createElement('tr');
+                    if (item.type === 'separator') {
+                        tr.className = "bg-neutral-100 border-y-2 border-neutral-300";
+                        tr.innerHTML = `
+                            <td colspan="3" class="p-2 font-mono text-xs font-bold text-neutral-900">
+                                <i class="fa-solid fa-bookmark mr-1.5 text-neutral-500"></i> ${escapeHtml(item.title)}
+                            </td>
+                        `;
+                    } else {
+                        tr.className = "border-b border-neutral-200";
+                        tr.innerHTML = `
+                            <td class="p-2 border-r border-neutral-300 font-serif text-xs text-neutral-900 align-top">"${escapeHtml(item.quote)}"</td>
+                            <td class="p-2 border-r border-neutral-300 text-xs text-neutral-800 align-top bg-neutral-50/50">${escapeHtml(item.process)}</td>
+                            <td class="p-2 text-xs text-neutral-800 align-top">${escapeHtml(item.effect)}</td>
+                        `;
+                    }
+                    tbody.appendChild(tr);
+                });
+            }
+
+            // Conclusion
+            document.getElementById('export-conclusion-summary').innerText = studyData.conclusion.summary || "--";
+            document.getElementById('export-conclusion-opening').innerText = studyData.conclusion.opening || "--";
+        }
+
+        // Markdown Copy
+        function copyMarkdown() {
+            let md = `# ${studyData.title || "Étude Linéaire"}\n`;
+            md += `**Auteur / Œuvre :** ${studyData.authorWork || ""}\n`;
+            md += `**Parcours :** ${studyData.course || ""}\n\n`;
+
+            md += `## 1. Introduction\n`;
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            md += `${[author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ")}\n\n`;
+
+            if (studyData.fullText && studyData.fullText.trim()) {
+                md += `## Extrait\n\`\`\`\n${studyData.fullText}\n\`\`\`\n\n`;
+            }
+
+            md += `## 2. Tableau d'Analyse Linéaire\n\n`;
+            md += `| Citation / Passage | Procédé / Analyse | Interprétation |\n`;
+            md += `| :--- | :--- | :--- |\n`;
+            
+            studyData.analysisItems.forEach(item => {
+                if (item.type === 'separator') {
+                    md += `| **${item.title.replace(/\|/g, '-')}** | | |\n`;
+                } else {
+                    md += `| ${item.quote.replace(/\n/g, ' ')} | ${item.process.replace(/\n/g, ' ')} | ${item.effect.replace(/\n/g, ' ')} |\n`;
+                }
+            });
+
+            md += `\n## 3. Conclusion\n`;
+            md += `**Bilan :** ${studyData.conclusion.summary || ""}\n`;
+            md += `**Ouverture :** ${studyData.conclusion.opening || ""}\n`;
+
+            navigator.clipboard.writeText(md).then(() => {
+                showToast("Fiche copiée au format Markdown !");
+            });
+        }
+
+        // LocalStorage Logic
+        function autoSave() {
+            studyData.title = document.getElementById('doc-title').value;
+            studyData.authorWork = document.getElementById('doc-author-work').value;
+            studyData.course = document.getElementById('doc-course').value;
+            studyData.fullText = document.getElementById('full-text-input').value;
+
+            studyData.conclusion.summary = document.getElementById('conclusion-summary').value;
+            studyData.conclusion.opening = document.getElementById('conclusion-opening').value;
+
+            localStorage.setItem('etude_lineaire_bac', JSON.stringify(studyData));
+        }
+
+        function manualSaveLocal() {
+            autoSave();
+            showToast("Étude enregistrée localement dans le navigateur !");
+        }
+
+        function loadSavedStudy() {
+            const saved = localStorage.getItem('etude_lineaire_bac');
+            if (saved) {
+                try {
+                    studyData = JSON.parse(saved);
+                    populateInputs();
+                } catch(e) {
+                    createNewStudy();
+                }
+            } else {
+                createNewStudy();
+            }
+        }
+
+        function populateInputs() {
+            document.getElementById('doc-title').value = studyData.title || "";
+            document.getElementById('doc-author-work').value = studyData.authorWork || "";
+            document.getElementById('doc-course').value = studyData.course || "";
+
+            document.getElementById('intro-author').value = studyData.intro?.author || "";
+            document.getElementById('intro-work').value = studyData.intro?.work || "";
+            document.getElementById('intro-extract').value = studyData.intro?.extract || "";
+            document.getElementById('intro-movement-lit').value = studyData.intro?.movementLit || "";
+            document.getElementById('intro-problem').value = studyData.intro?.problem || "";
+            document.getElementById('intro-plan').value = studyData.intro?.plan || "";
+
+            document.getElementById('full-text-input').value = studyData.fullText || "";
+
+            document.getElementById('conclusion-summary').value = studyData.conclusion?.summary || "";
+            document.getElementById('conclusion-opening').value = studyData.conclusion?.opening || "";
+
+            updateIntroPreview();
+            renderAnalysisTable();
+        }
+
+        // Blank State Creator
+        function createNewStudy() {
+            studyData = {
+                title: "",
+                authorWork: "",
+                course: "",
+                intro: { author: "", work: "", extract: "", movementLit: "", problem: "", plan: "" },
+                fullText: "",
+                analysisItems: [],
+                conclusion: { summary: "", opening: "" }
+            };
+            populateInputs();
+            autoSave();
+            switchTab('intro');
+            showToast("Nouvelle étude vierge créée", "info");
+        }
+
+        // Example Loader
+        function loadExampleBaudelaire() {
+            studyData = {
+                title: "L'Albatros",
+                authorWork: "Charles Baudelaire, Les Fleurs du Mal",
+                course: "Alchimie poétique : la boue et l'or",
+                intro: {
+                    author: "Charles Baudelaire (1821-1867) est un poète majeur du XIXe siècle à la croisée du romantisme et du symbolisme.",
+                    work: "Les Fleurs du Mal (1857) est son recueil poétique emblématique abordant le Spleen, l'Idéal et la modernité.",
+                    extract: "L'Albatros est le 2ème poème de la section Spleen et Idéal, illustrant la condition tragique du poète.",
+                    movementLit: "Le poème s'inscrit dans la modernité poétique et annonce le symbolisme par l'usage de l'allégorie.",
+                    problem: "En quoi ce poème constitue-t-il une allégorie de la condition tragique du poète dans la société ?",
+                    plan: "Dans un 1er mouvement (strophes 1-2), nous verrons la capture et le ridicule de l'oiseau. Dans un 2nd (strophe 3), la déchéance de l'albatros. Enfin dans le 3ème (strophe 4), la révélation allégorique du poète."
+                },
+                fullText: "Souvent, pour s'amuser, les hommes d'équipage\nPrennent des albatros, vastes oiseaux des mers,\nQui suivent, indolents compagnons de voyage,\nLe navire glissant sur les gouffres amers...\n\nLe Poète est semblable au prince des nuées\nQui hante la tempête et se rit de l'archer ;\nExilé sur le sol au milieu des huées,\nSes ailes de géant l'empêchent de marcher.",
+                analysisItems: [
+                    { type: 'separator', title: '1. Un divertissement cruel : la capture (strophes 1-2)' },
+                    { type: 'process', quote: "Souvent, pour s'amuser", process: "Adverbe de fréquence + complément de but", effect: "Montre la régularité du jeu cruel des marins." },
+                    { type: 'process', quote: "vastes oiseaux des mers", process: "Périphrase méliorative", effect: "Souligne la majesté et la grandeur naturelle de l'oiseau." },
+                    { type: 'separator', title: '2. La métamorphose et la déchéance (strophe 3)' },
+                    { type: 'process', quote: "Ce voyageur ailé, comme il est gauche et veule !", process: "Exclamation + antithèse", effect: "Oppose la grandeur passée à la laideur présente." },
+                    { type: 'separator', title: '3. Révélation allégorique (strophe 4)' },
+                    { type: 'process', quote: "Le Poète est semblable au prince des nuées", process: "Comparaison explicite avec majuscule", effect: "Révèle la clé d'interprétation : l'albatros est la figure du poète." }
+                ],
+                conclusion: {
+                    summary: "L'Albatros illustre la situation paradoxale du poète : sublime dans l'art et la création, mais inadapté et ridiculisé dans le monde matériel.",
+                    opening: "On peut rapprocher ce texte de l'Élévation de Baudelaire ou du Crapaud de Tristan Corbière."
+                }
+            };
+            populateInputs();
+            autoSave();
+            showToast("Exemple 'L'Albatros' chargé !");
+        }
+
+        // Export ZIP Functionality (using JSZip)
+        function exportToZip() {
+            autoSave();
+            const zip = new JSZip();
+
+            // 1. JSON State File
+            const jsonString = JSON.stringify(studyData, null, 2);
+            zip.file("etude.json", jsonString);
+
+            // 2. Standalone HTML Revision Sheet
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            const fullIntro = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
+            
+            let tableRowsHtml = "";
+            studyData.analysisItems.forEach(item => {
+                if (item.type === 'separator') {
+                    tableRowsHtml += `<tr style="background:#f5f5f5;"><td colspan="3" style="padding:8px; font-weight:bold; font-family:monospace;">${escapeHtml(item.title)}</td></tr>`;
+                } else {
+                    tableRowsHtml += `<tr>
+                        <td style="padding:8px; border-bottom:1px solid #ddd; font-style:italic;">"${escapeHtml(item.quote)}"</td>
+                        <td style="padding:8px; border-bottom:1px solid #ddd; background:#fafafa;">${escapeHtml(item.process)}</td>
+                        <td style="padding:8px; border-bottom:1px solid #ddd;">${escapeHtml(item.effect)}</td>
+                    </tr>`;
+                }
+            });
+
+            const htmlContent = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fiche : ${escapeHtml(studyData.title || "Étude Linéaire")}</title>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; color: #111; line-height: 1.5; }
+        h1 { font-size: 20px; text-transform: uppercase; border-bottom: 2px solid #111; padding-bottom: 8px; }
+        .meta { font-family: monospace; font-size: 13px; color: #555; margin-bottom: 24px; }
+        h2 { font-size: 14px; text-transform: uppercase; color: #666; border-bottom: 1px solid #ddd; margin-top: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+        th { text-align: left; background: #eee; padding: 8px; font-family: monospace; text-transform: uppercase; font-size: 11px; }
+        .box { background: #f9f9f9; border: 1px solid #eee; padding: 12px; border-radius: 4px; font-size: 13px; margin-top: 8px; }
+    </style>
+</head>
+<body>
+    <h1>${escapeHtml(studyData.title || "Étude Linéaire")}</h1>
+    <div class="meta">${escapeHtml(studyData.authorWork)} | ${escapeHtml(studyData.course)}</div>
+
+    <h2>1. Introduction</h2>
+    <p style="font-size:14px; text-align:justify;">${escapeHtml(fullIntro)}</p>
+
+    <h2>2. Analyse Linéaire</h2>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:30%;">Citation</th>
+                <th style="width:35%;">Procédé / Analyse</th>
+                <th style="width:35%;">Interprétation</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${tableRowsHtml}
+        </tbody>
+    </table>
+
+    <h2>3. Conclusion</h2>
+    <div class="box"><strong>Bilan :</strong> ${escapeHtml(studyData.conclusion.summary)}</div>
+    <div class="box"><strong>Ouverture :</strong> ${escapeHtml(studyData.conclusion.opening)}</div>
+</body>
+</html>`;
+
+            zip.file("fiche_revision.html", htmlContent);
+
+            // Generate ZIP
+            zip.generateAsync({ type: "blob" }).then(function (content) {
+                const fileName = (studyData.title ? studyData.title.toLowerCase().replace(/[^a-z0-9]/g, "_") : "etude_lineaire") + ".zip";
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(content);
+                link.download = fileName;
+                link.click();
+                showToast("Archive ZIP générée avec succès !");
+            });
+        }
+
+        // Import Project File (ZIP or JSON)
+        function importProjectFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const filename = file.name.toLowerCase();
+
+            if (filename.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        studyData = JSON.parse(e.target.result);
+                        populateInputs();
+                        autoSave();
+                        showToast("Étude JSON importée !");
+                    } catch(err) {
+                        showToast("Fichier JSON invalide.", "error");
+                    }
+                };
+                reader.readAsText(file);
+            } else if (filename.endsWith('.zip')) {
+                JSZip.loadAsync(file).then(function(zip) {
+                    if (zip.file("etude.json")) {
+                        zip.file("etude.json").async("string").then(function(content) {
+                            try {
+                                studyData = JSON.parse(content);
+                                populateInputs();
+                                autoSave();
+                                showToast("Archive ZIP importée avec succès !");
+                            } catch(err) {
+                                showToast("Erreur lors de la lecture du JSON dans le ZIP.", "error");
+                            }
+                        });
+                    } else {
+                        showToast("Fichier 'etude.json' introuvable dans le ZIP.", "error");
+                    }
+                }).catch(function() {
+                    showToast("Impossible de lire l'archive ZIP.", "error");
+                });
+            } else {
+                showToast("Format non supporté (utilisez .zip ou .json).", "error");
+            }
+
+            event.target.value = ""; // Reset file input
+        }
+
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
