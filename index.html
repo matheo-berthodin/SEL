@@ -82,12 +82,18 @@
     <header class="no-print bg-white border-b border-neutral-200 sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <span class="font-mono text-sm font-bold tracking-tight bg-neutral-900 text-white px-2 py-0.5 rounded">ÉL</span>
-                <h1 class="font-semibold text-sm text-neutral-900 tracking-tight">Bac de Français <span class="text-neutral-400 font-normal">| Studio d'Étude Linéaire</span></h1>
+                <span class="font-mono text-sm font-bold tracking-tight bg-neutral-900 text-white px-2 py-0.5 rounded">SÉL</span>
+                <h1 class="font-semibold text-sm text-neutral-900 tracking-tight">SÉL <span class="text-neutral-400 font-normal">| Studio d'Étude Linéaire</span></h1>
             </div>
 
             <!-- Header Actions : Import/Export/Local -->
             <div class="flex items-center space-x-2">
+                <!-- Dictée Vocale (Speech-to-Text) -->
+                <button id="stt-toggle-btn" onclick="toggleSpeechToText()" title="Activer/Désactiver la dictée vocale" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
+                    <i id="stt-icon" class="fa-solid fa-microphone text-neutral-500 mr-1.5"></i>
+                    <span id="stt-status-text" class="hidden sm:inline">Dictée</span>
+                </button>
+
                 <!-- Chargement de l'exemple -->
                 <button onclick="loadExampleBaudelaire()" title="Charger un exemple (L'Albatros)" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded transition">
                     <i class="fa-solid fa-lightbulb mr-1.5"></i>
@@ -399,7 +405,142 @@
         window.addEventListener('DOMContentLoaded', () => {
             loadSavedStudy();
             lucide.createIcons();
+            setupSTTFocusTracker();
         });
+
+        // Speech To Text (Dictée Vocale) Logic
+        let isSTTActive = false;
+        let recognition = null;
+        let lastFocusedInput = null;
+
+        function setupSTTFocusTracker() {
+            document.addEventListener('focusin', (e) => {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    lastFocusedInput = e.target;
+                }
+            });
+            document.addEventListener('click', (e) => {
+                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    lastFocusedInput = e.target;
+                }
+            });
+        }
+
+        function initSpeechToText() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("La reconnaissance vocale n'est pas supportée par ce navigateur.", "error");
+                return false;
+            }
+
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'fr-FR';
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    if (event.results[i].isFinal) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (transcript.trim()) {
+                    if (lastFocusedInput) {
+                        insertTextAtCursor(lastFocusedInput, transcript.trim());
+                    } else {
+                        showToast("Cliquez dans un champ pour y dicter le texte.", "info");
+                    }
+                }
+            };
+
+            recognition.onerror = (event) => {
+                if (event.error === 'not-allowed') {
+                    showToast("Accès au microphone refusé.", "error");
+                    stopSTT();
+                } else if (event.error !== 'no-speech') {
+                    console.error("STT error:", event.error);
+                }
+            };
+
+            recognition.onend = () => {
+                if (isSTTActive) {
+                    try { recognition.start(); } catch(e) {}
+                } else {
+                    updateSTTUI(false);
+                }
+            };
+
+            return true;
+        }
+
+        function insertTextAtCursor(input, text) {
+            const start = input.selectionStart ?? input.value.length;
+            const end = input.selectionEnd ?? input.value.length;
+            const currentVal = input.value;
+
+            let textToInsert = text;
+            if (start > 0 && currentVal[start - 1] !== ' ' && currentVal[start - 1] !== '\n') {
+                textToInsert = ' ' + textToInsert;
+            }
+
+            input.value = currentVal.substring(0, start) + textToInsert + currentVal.substring(end);
+            input.selectionStart = input.selectionEnd = start + textToInsert.length;
+
+            // Déclencher l'événement 'input' pour l'autosave et la mise à jour des aperçus
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+
+        function toggleSpeechToText() {
+            if (isSTTActive) {
+                stopSTT();
+            } else {
+                startSTT();
+            }
+        }
+
+        function startSTT() {
+            if (!recognition && !initSpeechToText()) return;
+
+            try {
+                recognition.start();
+                isSTTActive = true;
+                updateSTTUI(true);
+                showToast("Dictée vocale activée ! Cliquez sur un champ et parlez.");
+            } catch(e) {
+                console.error("Erreur lancement STT:", e);
+            }
+        }
+
+        function stopSTT() {
+            isSTTActive = false;
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
+            updateSTTUI(false);
+            showToast("Dictée vocale désactivée.", "info");
+        }
+
+        function updateSTTUI(active) {
+            const btn = document.getElementById('stt-toggle-btn');
+            const icon = document.getElementById('stt-icon');
+            const statusText = document.getElementById('stt-status-text');
+
+            if (!btn || !icon) return;
+
+            if (active) {
+                btn.classList.remove('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
+                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
+                icon.className = "fa-solid fa-microphone text-white mr-1.5";
+                if (statusText) statusText.innerText = "Dictée activée";
+            } else {
+                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
+                btn.classList.add('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
+                icon.className = "fa-solid fa-microphone text-neutral-500 mr-1.5";
+                if (statusText) statusText.innerText = "Dictée";
+            }
+        }
 
         // Notifications (Toasts)
         function showToast(message, type = 'success') {
