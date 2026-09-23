@@ -89,15 +89,15 @@
             <!-- Header Actions : Import/Export/Local -->
             <div class="flex items-center space-x-2">
                 <!-- Dictée Vocale (Speech-to-Text) -->
-                <button id="stt-toggle-btn" onclick="toggleSpeechToText()" title="Activer/Désactiver la dictée vocale" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
+                <button id="stt-toggle-btn" onclick="toggleSpeechToText()" title="Activer/Désactiver la dictée vocale avancée" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
                     <i id="stt-icon" class="fa-solid fa-microphone text-neutral-500 mr-1.5"></i>
                     <span id="stt-status-text" class="hidden sm:inline">Dictée</span>
                 </button>
 
-                <!-- Chargement de l'exemple -->
-                <button onclick="loadExampleBaudelaire()" title="Charger un exemple (L'Albatros)" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded transition">
-                    <i class="fa-solid fa-lightbulb mr-1.5"></i>
-                    <span class="hidden sm:inline">Exemple</span>
+                <!-- Rentrer un code -->
+                <button onclick="promptCodeInput()" title="Saisir un code (ex: 123 pour Dom Juan)" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded transition">
+                    <i class="fa-solid fa-key mr-1.5"></i>
+                    <span class="hidden sm:inline">Rentrer un code</span>
                 </button>
 
                 <!-- Sauvegarde locale forcée -->
@@ -408,28 +408,72 @@
             setupSTTFocusTracker();
         });
 
-        // Speech To Text (Dictée Vocale) Logic
+        // Advanced Speech To Text (Dictée Vocale Avancée)
         let isSTTActive = false;
         let recognition = null;
         let lastFocusedInput = null;
 
         function setupSTTFocusTracker() {
-            document.addEventListener('focusin', (e) => {
+            const trackFocus = (e) => {
                 if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
+                    if (lastFocusedInput && lastFocusedInput !== e.target) {
+                        lastFocusedInput.classList.remove('ring-2', 'ring-red-400');
+                    }
                     lastFocusedInput = e.target;
+                    if (isSTTActive) {
+                        lastFocusedInput.classList.add('ring-2', 'ring-red-400');
+                    }
                 }
+            };
+            document.addEventListener('focusin', trackFocus);
+            document.addEventListener('click', trackFocus);
+        }
+
+        function parsePunctuation(text) {
+            if (!text) return "";
+            let formatted = text;
+
+            // Remplacement ordonné : locutions composées d'abord, mots simples ensuite
+            const replacements = [
+                { regex: /\b(point[s]?\s+de\s+suspension|trois\s+points)\b/gi, replacement: '...' },
+                { regex: /\b(point\s+d['’]\s*exclamation|point\s+d\s+exclamation)\b/gi, replacement: '!' },
+                { regex: /\b(point\s+d['’]\s*interrogation|point\s+d\s+interrogation)\b/gi, replacement: '?' },
+                { regex: /\b(point[\s-]virgule)\b/gi, replacement: ';' },
+                { regex: /\b(deux\s+points)\b/gi, replacement: ':' },
+                { regex: /\b(à\s+la\s+ligne|a\s+la\s+ligne|nouvelle\s+ligne)\b/gi, replacement: '\n' },
+                { regex: /\b(nouveau\s+paragraphe)\b/gi, replacement: '\n\n' },
+                { regex: /\b(ouvrez\s+les\s+guillemets|ouvrir\s+les\s+guillemets)\b/gi, replacement: ' « ' },
+                { regex: /\b(fermez\s+les\s+guillemets|fermer\s+les\s+guillemets)\b/gi, replacement: ' » ' },
+                { regex: /\b(ouvrez\s+la\s+parenthèse|ouvrir\s+la\s+parenthèse)\b/gi, replacement: ' (' },
+                { regex: /\b(fermez\s+la\s+parenthèse|fermer\s+la\s+parenthèse)\b/gi, replacement: ') ' },
+                { regex: /\b(virgule)\b/gi, replacement: ',' },
+                { regex: /\b(point)\b/gi, replacement: '.' },
+                { regex: /\b(tiret)\b/gi, replacement: ' - ' }
+            ];
+
+            replacements.forEach(r => {
+                formatted = formatted.replace(r.regex, r.replacement);
             });
-            document.addEventListener('click', (e) => {
-                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-                    lastFocusedInput = e.target;
-                }
-            });
+
+            // Normalisation stricte de la ponctuation et des espaces en français
+            formatted = formatted
+                .replace(/\s+([,\.!\?:;])/g, '$1') // Supprime les espaces avant la ponctuation
+                .replace(/([,\.!\?:;])([^\s\d\n\.\!\?])/g, '$1 $2') // Assure un espace après la ponctuation
+                .replace(/\s*«\s*/g, ' « ')
+                .replace(/\s*»\s*/g, ' » ')
+                .replace(/\(\s+/g, '(')
+                .replace(/\s+\)/g, ')');
+
+            // Majuscule automatique après un point, !, ? ou saut de ligne
+            formatted = formatted.replace(/(^|[\.\!\?\n]\s*)([a-zàâæçéèêëîïôœùûüÿ])/g, (m, p1, p2) => p1 + p2.toUpperCase());
+
+            return formatted;
         }
 
         function initSpeechToText() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
-                showToast("La reconnaissance vocale n'est pas supportée par ce navigateur.", "error");
+                showToast("La reconnaissance vocale n'est pas supportée par votre navigateur (essayez Chrome ou Edge).", "error");
                 return false;
             }
 
@@ -442,15 +486,16 @@
                 let transcript = '';
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     if (event.results[i].isFinal) {
-                        transcript += event.results[i][0].transcript;
+                        transcript += event.results[i][0].transcript + ' ';
                     }
                 }
 
                 if (transcript.trim()) {
+                    const formattedSpeech = parsePunctuation(transcript.trim());
                     if (lastFocusedInput) {
-                        insertTextAtCursor(lastFocusedInput, transcript.trim());
+                        insertTextAtCursor(lastFocusedInput, formattedSpeech);
                     } else {
-                        showToast("Cliquez dans un champ pour y dicter le texte.", "info");
+                        showToast("Cliquez dans un champ de texte pour y dicter votre texte.", "info");
                     }
                 }
             };
@@ -481,14 +526,15 @@
             const currentVal = input.value;
 
             let textToInsert = text;
-            if (start > 0 && currentVal[start - 1] !== ' ' && currentVal[start - 1] !== '\n') {
+            // Ajouter un espace avant le mot si on n'est pas en début de ligne ou après un espace
+            if (start > 0 && currentVal[start - 1] !== ' ' && currentVal[start - 1] !== '\n' && ! textToInsert.match(/^[,\.!\?:;]/)) {
                 textToInsert = ' ' + textToInsert;
             }
 
             input.value = currentVal.substring(0, start) + textToInsert + currentVal.substring(end);
             input.selectionStart = input.selectionEnd = start + textToInsert.length;
 
-            // Déclencher l'événement 'input' pour l'autosave et la mise à jour des aperçus
+            // Déclencher les évènements de mise à jour
             input.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
@@ -497,6 +543,67 @@
                 stopSTT();
             } else {
                 startSTT();
+            }
+        }
+
+        function startSTT() {
+            if (!recognition && !initSpeechToText()) return;
+
+            try {
+                recognition.start();
+                isSTTActive = true;
+                updateSTTUI(true);
+                showToast("Dictée vocale activée ! Cliquez sur un champ et parlez.");
+            } catch(e) {
+                console.error("Erreur lancement STT:", e);
+            }
+        }
+
+        function stopSTT() {
+            isSTTActive = false;
+            if (recognition) {
+                try { recognition.stop(); } catch(e) {}
+            }
+            if (lastFocusedInput) {
+                lastFocusedInput.classList.remove('ring-2', 'ring-red-400');
+            }
+            updateSTTUI(false);
+            showToast("Dictée vocale désactivée.", "info");
+        }
+
+        function updateSTTUI(active) {
+            const btn = document.getElementById('stt-toggle-btn');
+            const icon = document.getElementById('stt-icon');
+            const statusText = document.getElementById('stt-status-text');
+
+            if (!btn || !icon) return;
+
+            if (active) {
+                btn.classList.remove('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
+                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
+                icon.className = "fa-solid fa-microphone text-white mr-1.5";
+                if (statusText) statusText.innerText = "Dictée activée";
+                if (lastFocusedInput) lastFocusedInput.classList.add('ring-2', 'ring-red-400');
+            } else {
+                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
+                btn.classList.add('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
+                icon.className = "fa-solid fa-microphone text-neutral-500 mr-1.5";
+                if (statusText) statusText.innerText = "Dictée";
+            }
+        }
+
+        // Saisie et vérification du code
+        function promptCodeInput() {
+            const code = prompt("Veuillez saisir votre code d'accès / d'étude (ex: 123 pour Dom Juan de Molière) :");
+            if (code === null) return; // Annulé
+
+            const cleanCode = code.replace(/\s+/g, '').trim();
+            if (cleanCode === '123') {
+                loadExampleDomJuan();
+            } else if (cleanCode === '1' || cleanCode === '01') {
+                loadExampleBaudelaire();
+            } else {
+                showToast("Code invalide. Essayez le code 123 pour charger Dom Juan.", "error");
             }
         }
 
@@ -868,7 +975,20 @@
             showToast("Nouvelle étude vierge créée", "info");
         }
 
-        // Example Loader
+        // Example Loader Selector
+        function promptExampleCode() {
+            const code = prompt("Saisissez le code de l'exemple (ex: 123 pour Dom Juan de Molière, ou appuyez sur OK pour 'L'Albatros' de Baudelaire) :");
+            if (code === null) return; // annulé
+
+            const cleanCode = code.trim();
+            if (cleanCode === '123') {
+                loadExampleDomJuan();
+            } else {
+                loadExampleBaudelaire();
+            }
+        }
+
+        // Example Loader 1 : Baudelaire
         function loadExampleBaudelaire() {
             studyData = {
                 title: "L'Albatros",
@@ -900,6 +1020,41 @@
             populateInputs();
             autoSave();
             showToast("Exemple 'L'Albatros' chargé !");
+        }
+
+        // Example Loader 2 : Molière - Dom Juan (Code 123)
+        function loadExampleDomJuan() {
+            studyData = {
+                title: "Dom Juan (Acte II, Scène 2)",
+                authorWork: "Molière, Dom Juan",
+                course: "Le théâtre du XVIIe siècle : du rire aux larmes / La comédie classique",
+                intro: {
+                    author: "Molière est un comédien et dramaturge français, de son vrai nom Jean-Baptiste Poquelin. C'est un auteur de théâtre classique du XVIIe siècle. Molière critique les mœurs grâce à de nombreuses pièces comme les plus connues : Le Malade imaginaire, Les Femmes savantes, Le Tartuffe, L'Avare. Molière fonde sa propre troupe de théâtre, l'Illustre Théâtre, au service de Louis XIV. Et on inventera un nouveau type de pièce : la comédie-ballet.",
+                    work: "Dom Juan, aussi appelé Le Festin de pierre, est une pièce en prose. Elle présente l'histoire de Dom Juan, un libertin au XVIIe siècle. Le libertinage est une aptitude qui rejette les idées reçues dans le domaine politique, religieux. Il ne respecte pas les codes sociaux et la morale de son rang. Il laisse libre cours à ses désirs. Dans la pièce, Dom Juan a épousé une jeune femme, Done Elvire puis l'a abandonnée, et est donc poursuivi par ses frères. Il est accompagné de son valet, Sganarelle, et rencontre Charlotte dans cet extrait.",
+                    extract: "Charlotte est une paysanne qui parle le patois. Elle est promise à Pierrot, un paysan. Ce passage se situe à l'acte II, scène 2. Il est composé en trois parties. La première est que Dom Juan essaie de séduire Charlotte malgré ses doutes. Puis, Dom Juan promet un mariage à Charlotte. Et pour finir, Dom Juan fait des serments, ce qui convainc Charlotte.",
+                    movementLit: "Comédie classique et esthétique du libertinage au XVIIe siècle.",
+                    problem: "Comment, dans ce passage, le discours séducteur de Dom Juan masque-t-il ses véritables intentions ?",
+                    plan: "1. Dom Juan essaie de séduire Charlotte malgré ses doutes.\n2. Dom Juan promet un mariage à Charlotte.\n3. Dom Juan fait des serments, ce qui convainc Charlotte."
+                },
+                fullText: "CHARLOTTE : Monsieur, vous me hontevez.\nDOM JUAN : Avez-vous bien du cœur, Charlotte ? Ah ! la belle personne !\nCHARLOTTE : Je ne sais pas ce que c'est ; mais vous me faites venir une envie d'en avoir.\nDOM JUAN : Je veux vous épouser, Charlotte. Je le jure par le ciel, par tout ce qu'il y a de plus sacré !",
+                analysisItems: [
+                    { type: 'separator', title: '1. Dom Juan essaie de séduire Charlotte malgré ses doutes' },
+                    { type: 'process', quote: "d'où sort cette jolie paysanne... A-t-on rien vu de plus agréable ?", process: "Question rhétorique & éloge hyperbolique", effect: "Démarrage immédiat de la stratégie de séduction par la flatterie physique auprès d'une ingénue." },
+                    { type: 'process', quote: "ses yeux sont assassins !", process: "Métaphore galante de la préciosité", effect: "Dom Juan adapte les codes de la galanterie de cour pour éblouir la jeune paysanne." },
+                    { type: 'separator', title: '2. Dom Juan promet un mariage à Charlotte' },
+                    { type: 'process', quote: "Je veux vous épouser", process: "Affirmation catégorique sans nuance", effect: "Promesse disproportionnée et mensongère transgressant les règles sociales pour captiver Charlotte." },
+                    { type: 'process', quote: "Monsieur, vous me hontevez.", process: "Patois & ingénuité du langage", effect: "Traduit le décalage social et la vulnérabilité de la paysanne face au grand seigneur libertin." },
+                    { type: 'separator', title: '3. Dom Juan fait des serments, ce qui convainc Charlotte' },
+                    { type: 'process', quote: "Je le jure par le ciel, par tout ce qu'il y a de plus sacré !", process: "Serment hyperbolique & hypocrisie sacrilège", effect: "Utilisation abusive du vocabulaire sacré pour emporter l'adhésion définitive de Charlotte, révélant la duplicité libertine de Dom Juan." }
+                ],
+                conclusion: {
+                    summary: "Dans cette scène, le discours séducteur de Dom Juan déploie toute la rhétorique libertine. En manipulant le langage sacré et les promesses de mariage, il dissimule son désir de domination sous une fausse galanterie.",
+                    opening: "On peut rapprocher ce passage de la scène de séduction du Séducteur de Séville de Tirso de Molina ou de la scène du Tartuffe tentant de séduire Elmire."
+                }
+            };
+            populateInputs();
+            autoSave();
+            showToast("Code 123 validé : Étude 'Dom Juan' chargée avec succès !");
         }
 
         // Export ZIP Functionality (using JSZip)
