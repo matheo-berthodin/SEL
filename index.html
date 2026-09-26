@@ -78,7 +78,6 @@
     <!-- Toast Notification Box -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-    <!-- Minimalist Header -->
     <header class="no-print bg-white border-b border-neutral-200 sticky top-0 z-30">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -89,13 +88,13 @@
             <!-- Header Actions : Import/Export/Local -->
             <div class="flex items-center space-x-2">
                 <!-- Dictée Vocale (Speech-to-Text) -->
-                <button id="stt-toggle-btn" onclick="toggleSpeechToText()" title="Activer/Désactiver la dictée vocale avancée" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
+                <button id="stt-toggle-btn" onclick="toggleSpeechToText()" title="Activer/Désactiver la dictée vocale" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition">
                     <i id="stt-icon" class="fa-solid fa-microphone text-neutral-500 mr-1.5"></i>
                     <span id="stt-status-text" class="hidden sm:inline">Dictée</span>
                 </button>
 
                 <!-- Rentrer un code -->
-                <button onclick="promptCodeInput()" title="Saisir un code" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded transition">
+                <button onclick="promptCodeInput()" title="Saisir un code exemple (ex: 123 pour Dom Juan, 000 pour Baudelaire)" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded transition">
                     <i class="fa-solid fa-key mr-1.5"></i>
                     <span class="hidden sm:inline">Rentrer un code</span>
                 </button>
@@ -136,7 +135,6 @@
     <!-- Main Content Container -->
     <main class="flex-1 flex flex-col max-w-6xl w-full mx-auto px-4 sm:px-6 py-6">
         
-        <!-- Metadata Header -->
         <div class="no-print bg-white rounded-lg border border-neutral-200 p-4 mb-6 shadow-2xs">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
@@ -157,9 +155,8 @@
             </div>
         </div>
 
-        <!-- Navigation Tabs -->
         <nav class="no-print flex space-x-1 border-b border-neutral-200 mb-6 overflow-x-auto" id="main-tabs">
-            <button onclick="switchTab('intro')" id="tab-btn-intro" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-neutral-900 text-neutral-900 bg-white flex items-center space-x-2 whitespace-nowrap">
+            <button onclick="switchTab('intro')" id="tab-btn-intro" class="tab-btn px-4 py-2 text-xs font-medium rounded-t border-b-2 border-neutral-900 text-neutral-900 bg-white flex items-center space-x-2 whitespace-nowrap font-semibold">
                 <span class="font-mono text-[10px] text-neutral-400">01</span>
                 <span>Introduction</span>
             </button>
@@ -181,22 +178,21 @@
             </button>
         </nav>
 
-        <!-- TAB 1: INTRODUCTION -->
         <div id="tab-intro" class="tab-content flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div class="lg:col-span-7 space-y-4">
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">1. Présentation de l'auteur</label>
-                    <textarea id="intro-author" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Auteur, dates, siècle, faits biographiques majeurs (ex: Charles Baudelaire, poète du XIXe siècle)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-author" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Auteur, dates, siècle, faits biographiques majeurs..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">2. Présentation de l'œuvre</label>
-                    <textarea id="intro-work" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Titre de l'œuvre, date de parution, genre, thèmes clés (ex: Les Fleurs du Mal, recueil poétique explorant le Spleen et l'Idéal)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-work" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Titre de l'œuvre, date de parution, genre, thèmes clés..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">3. Présentation de l'extrait</label>
-                    <textarea id="intro-extract" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Situation du passage dans l'œuvre, résumé succinct du passage..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-extract" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Situation du passage dans l'œuvre, résumé succinct..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
@@ -206,12 +202,12 @@
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">5. Problématique</label>
-                    <textarea id="intro-problem" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="En quoi cet extrait montre-t-il... / Dans quelle mesure le discours séducteur de Dom Juan..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-problem" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="En quoi cet extrait montre-t-il..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">6. Annonce des mouvements du texte</label>
-                    <textarea id="intro-plan" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Dans un premier mouvement, nous verrons... Puis dans un second mouvement..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-plan" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Dans un premier mouvement, nous verrons..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
             </div>
 
@@ -239,7 +235,6 @@
             </div>
         </div>
 
-        <!-- TAB 2: TEXTE BRUT -->
         <div id="tab-text" class="tab-content hidden flex-1 flex flex-col">
             <div class="bg-white p-6 rounded-lg border border-neutral-200 shadow-2xs flex-1 flex flex-col">
                 <div class="flex items-center justify-between mb-3">
@@ -252,21 +247,20 @@
             </div>
         </div>
 
-        <!-- TAB 3: ANALYSE LINÉAIRE -->
         <div id="tab-analysis" class="tab-content hidden flex-1 space-y-4">
             <div class="flex flex-wrap items-center justify-between gap-2 bg-white p-4 rounded-lg border border-neutral-200">
                 <div>
                     <h3 class="text-xs font-bold font-mono uppercase tracking-wider text-neutral-900">Éléments de l'analyse linéaire</h3>
-                    <p class="text-xs text-neutral-500">Ajoutez des procédés ou insérez des séparations pour délimiter les mouvements.</p>
+                    <p class="text-xs text-neutral-500">Ajoutez des procédés, précisez les numéros de ligne et réorganisez l'ordre à tout moment.</p>
                 </div>
                 <div class="flex items-center space-x-2">
-                    <button onclick="addAxisSeparator()" class="px-3 py-1.5 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition flex items-center">
+                    <button onclick="addAxisSeparator()" class="px-3 py-1.5 text-xs font-medium text-neutral-800 bg-neutral-100 hover:bg-neutral-200 border border-neutral-200 rounded transition flex items-center" title="Insère un axe sous la ligne active ou à la fin">
                         <i class="fa-solid fa-bookmark mr-1.5 text-neutral-500"></i>
-                        <span>+ Changement d'axe / Mouvement</span>
+                        <span>+ Mouvement / Axe</span>
                     </button>
-                    <button onclick="addProcessRow()" class="px-3 py-1.5 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded transition flex items-center">
+                    <button onclick="addProcessRow()" class="px-3 py-1.5 text-xs font-medium text-white bg-neutral-900 hover:bg-neutral-800 rounded transition flex items-center" title="Insère un procédé sous la ligne active ou à la fin">
                         <i class="fa-solid fa-plus mr-1.5"></i>
-                        <span>+ Ligne de procédé</span>
+                        <span>+ Procédé</span>
                     </button>
                 </div>
             </div>
@@ -276,10 +270,12 @@
                     <table class="w-full text-left border-collapse">
                         <thead>
                             <tr class="bg-neutral-100 border-b border-neutral-200 text-[11px] font-mono uppercase text-neutral-600">
-                                <th class="p-3 w-1/4">Citation / Passage</th>
-                                <th class="p-3 w-1/3">Procédé & Analyse Grammaticale</th>
-                                <th class="p-3 w-1/3">Interprétation & Effet</th>
-                                <th class="p-2 w-8"></th>
+                                <th class="p-3 w-12 text-center">Ordre</th>
+                                <th class="p-3 w-24">Ligne / Vers</th>
+                                <th class="p-3 w-1/3">Citation(s) / Passage(s)</th>
+                                <th class="p-3 w-1/4">Procédé & Analyse Grammaticale</th>
+                                <th class="p-3 w-1/4">Interprétation & Effet</th>
+                                <th class="p-2 w-16 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="analysis-rows-container" class="divide-y divide-neutral-200 text-xs">
@@ -290,12 +286,11 @@
             </div>
         </div>
 
-        <!-- TAB 4: CONCLUSION -->
         <div id="tab-conclusion" class="tab-content hidden flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white p-5 rounded-lg border border-neutral-200 shadow-2xs space-y-2">
                 <label class="block text-xs font-bold font-mono uppercase tracking-wider text-neutral-900">Bilan de l'analyse</label>
                 <p class="text-xs text-neutral-400">Répondre à la problématique et reformuler les idées principales.</p>
-                <textarea id="conclusion-summary" rows="8" oninput="autoSave()" placeholder="Pour conclure, cette étude montre que... [Réponse directe à la problématique en synthétisant les mouvements]..." class="w-full text-xs p-3 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none font-serif leading-relaxed"></textarea>
+                <textarea id="conclusion-summary" rows="8" oninput="autoSave()" placeholder="Pour conclure, cette étude montre que..." class="w-full text-xs p-3 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none font-serif leading-relaxed"></textarea>
             </div>
 
             <div class="bg-white p-5 rounded-lg border border-neutral-200 shadow-2xs space-y-2">
@@ -305,11 +300,27 @@
             </div>
         </div>
 
-        <!-- TAB 5: FICHE DE RÉVISION SIMPLIFIÉE -->
         <div id="tab-export" class="tab-content hidden flex-1 space-y-4">
             <!-- Toolbar -->
-            <div class="no-print bg-white p-3 rounded-lg border border-neutral-200 flex items-center justify-between">
-                <span class="text-xs font-mono text-neutral-500">Prise de note / Fiche de révision assemblée</span>
+            <div class="no-print bg-white p-3 rounded-lg border border-neutral-200 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center space-x-4 text-xs">
+                    <label class="inline-flex items-center cursor-pointer select-none font-medium text-neutral-700">
+                        <input type="checkbox" id="toggle-show-extract" onchange="toggleExtractVisibility(this.checked)" class="rounded border-neutral-300 text-neutral-900 focus:ring-neutral-900 mr-2">
+                        <span>Afficher l'extrait</span>
+                    </label>
+
+                    <div class="h-4 w-[1px] bg-neutral-200"></div>
+
+                    <div class="flex items-center space-x-1 bg-neutral-100 p-0.5 rounded border border-neutral-200">
+                        <button id="mode-btn-fiche" onclick="setExportDocMode('fiche')" class="px-2.5 py-1 text-xs font-medium rounded transition bg-white text-neutral-900 shadow-2xs font-semibold">
+                            <i class="fa-solid fa-square-poll-vertical mr-1 text-neutral-500"></i> Mode Fiche
+                        </button>
+                        <button id="mode-btn-classic" onclick="setExportDocMode('classic')" class="px-2.5 py-1 text-xs font-medium rounded transition text-neutral-600 hover:text-neutral-900">
+                            <i class="fa-solid fa-file-word mr-1 text-blue-600"></i> Style Doc / Word
+                        </button>
+                    </div>
+                </div>
+
                 <div class="flex items-center space-x-2">
                     <button onclick="copyMarkdown()" class="px-3 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded transition">
                         <i class="fa-regular fa-copy mr-1"></i> Copier Markdown
@@ -320,71 +331,26 @@
                 </div>
             </div>
 
-            <!-- Visual Sheet -->
+            <!-- Visual Sheet Container -->
             <div id="export-sheet" class="bg-white p-8 sm:p-12 rounded-lg border border-neutral-200 max-w-4xl mx-auto text-neutral-900 print-border-none font-serif">
-                <!-- Title Header -->
-                <div class="border-b-2 border-neutral-900 pb-4 mb-6">
-                    <div class="flex justify-between items-baseline">
-                        <h1 id="export-title" class="text-xl font-bold font-sans uppercase tracking-tight text-neutral-900">Titre de l'Étude</h1>
-                        <span id="export-author-work" class="text-xs font-mono text-neutral-600">Auteur - Œuvre</span>
-                    </div>
-                    <div id="export-course" class="text-xs font-mono text-neutral-500 mt-1 italic">Parcours</div>
-                </div>
-
-                <!-- Extrait Brut -->
-                <div id="export-text-section" class="mb-6 hidden">
-                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">Texte de l'extrait</h2>
-                    <div id="export-full-text" class="text-xs text-neutral-700 leading-relaxed whitespace-pre-wrap italic bg-neutral-50 p-3 rounded border border-neutral-100"></div>
-                </div>
-
-                <!-- Introduction -->
-                <div class="mb-6">
-                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">1. Introduction</h2>
-                    <p id="export-intro" class="text-xs text-neutral-800 leading-relaxed text-justify">--</p>
-                </div>
-
-                <!-- Large Single Table -->
-                <div class="mb-6">
-                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-3 border-b border-neutral-200 pb-1">2. Tableau d'Analyse Linéaire</h2>
-                    <table class="w-full text-left border-collapse border border-neutral-300 text-xs font-sans">
-                        <thead>
-                            <tr class="bg-neutral-100 border-b border-neutral-300 font-mono text-[10px] text-neutral-700 uppercase">
-                                <th class="p-2 border-r border-neutral-300 w-1/4">Citation / Passage</th>
-                                <th class="p-2 border-r border-neutral-300 w-1/3">Procédé / Analyse</th>
-                                <th class="p-2 w-5/12">Interprétation</th>
-                            </tr>
-                        </thead>
-                        <tbody id="export-table-body" class="divide-y divide-neutral-300">
-                            <!-- Dynamic Content -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Conclusion -->
-                <div>
-                    <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">3. Conclusion</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        <div class="p-3 bg-neutral-50 border border-neutral-200 rounded">
-                            <span class="font-mono font-bold uppercase text-[10px] text-neutral-500 block mb-1">Bilan & Réponse à la problématique :</span>
-                            <p id="export-conclusion-summary" class="text-neutral-800 leading-relaxed">--</p>
-                        </div>
-                        <div class="p-3 bg-neutral-50 border border-neutral-200 rounded">
-                            <span class="font-mono font-bold uppercase text-[10px] text-neutral-500 block mb-1">Ouverture :</span>
-                            <p id="export-conclusion-opening" class="text-neutral-800 leading-relaxed">--</p>
-                        </div>
-                    </div>
-                </div>
+                <!-- Content generated dynamically -->
             </div>
         </div>
 
     </main>
 
     <script>
-        // State Model
+        // Global Application State Model
+        let activeRowIndex = -1;
+        let recognition = null;
+        let isDictating = false;
+
         let studyData = {
             title: "",
             authorWork: "",
             course: "",
+            showExtract: false,
+            docMode: "fiche", // "fiche" or "classic"
             intro: {
                 author: "",
                 work: "",
@@ -394,317 +360,340 @@
                 plan: ""
             },
             fullText: "",
-            analysisItems: [], // Objects: { type: 'separator'|'process', title: '', quote: '', process: '', effect: '' }
+            analysisItems: [],
             conclusion: {
                 summary: "",
                 opening: ""
             }
         };
 
-        // App Initialization
-        window.addEventListener('DOMContentLoaded', () => {
-            loadSavedStudy();
-            lucide.createIcons();
-            setupSTTFocusTracker();
-        });
-
-        // Advanced Speech To Text (Dictée Vocale Avancée)
-        let isSTTActive = false;
-        let recognition = null;
-        let lastFocusedInput = null;
-
-        function setupSTTFocusTracker() {
-            const trackFocus = (e) => {
-                if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) {
-                    if (lastFocusedInput && lastFocusedInput !== e.target) {
-                        lastFocusedInput.classList.remove('ring-2', 'ring-red-400');
-                    }
-                    lastFocusedInput = e.target;
-                    if (isSTTActive) {
-                        lastFocusedInput.classList.add('ring-2', 'ring-red-400');
-                    }
-                }
-            };
-            document.addEventListener('focusin', trackFocus);
-            document.addEventListener('click', trackFocus);
-        }
-
-        function parsePunctuation(text) {
-            if (!text) return "";
-            let formatted = text;
-
-            const replacements = [
-                { regex: /\b(point[s]?\s+de\s+suspension|trois\s+points)\b/gi, replacement: '...' },
-                { regex: /\b(point\s+d['’]\s*exclamation|point\s+d\s+exclamation)\b/gi, replacement: '!' },
-                { regex: /\b(point\s+d['’]\s*interrogation|point\s+d\s+interrogation)\b/gi, replacement: '?' },
-                { regex: /\b(point[\s-]virgule)\b/gi, replacement: ';' },
-                { regex: /\b(deux\s+points)\b/gi, replacement: ':' },
-                { regex: /\b(à\s+la\s+ligne|a\s+la\s+ligne|nouvelle\s+ligne)\b/gi, replacement: '\n' },
-                { regex: /\b(nouveau\s+paragraphe)\b/gi, replacement: '\n\n' },
-                { regex: /\b(ouvrez\s+les\s+guillemets|ouvrir\s+les\s+guillemets)\b/gi, replacement: ' « ' },
-                { regex: /\b(fermez\s+les\s+guillemets|fermer\s+les\s+guillemets)\b/gi, replacement: ' » ' },
-                { regex: /\b(ouvrez\s+la\s+parenthèse|ouvrir\s+la\s+parenthèse)\b/gi, replacement: ' (' },
-                { regex: /\b(fermez\s+la\s+parenthèse|fermer\s+la\s+parenthèse)\b/gi, replacement: ') ' },
-                { regex: /\b(virgule)\b/gi, replacement: ',' },
-                { regex: /\b(point)\b/gi, replacement: '.' },
-                { regex: /\b(tiret)\b/gi, replacement: ' - ' }
-            ];
-
-            replacements.forEach(r => {
-                formatted = formatted.replace(r.regex, r.replacement);
-            });
-
-            formatted = formatted
-                .replace(/\s+([,\.!\?:;])/g, '$1')
-                .replace(/([,\.!\?:;])([^\s\d\n\.\!\?])/g, '$1 $2')
-                .replace(/\s*«\s*/g, ' « ')
-                .replace(/\s*»\s*/g, ' » ')
-                .replace(/\(\s+/g, '(')
-                .replace(/\s+\)/g, ')');
-
-            formatted = formatted.replace(/(^|[\.\!\?\n]\s*)([a-zàâæçéèêëîïôœùûüÿ])/g, (m, p1, p2) => p1 + p2.toUpperCase());
-
-            return formatted;
-        }
-
-        function initSpeechToText() {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            if (!SpeechRecognition) {
-                showToast("La reconnaissance vocale n'est pas supportée par votre navigateur (essayez Chrome ou Edge).", "error");
-                return false;
-            }
-
-            recognition = new SpeechRecognition();
-            recognition.continuous = true;
-            recognition.interimResults = false;
-            recognition.lang = 'fr-FR';
-
-            recognition.onresult = (event) => {
-                let transcript = '';
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    if (event.results[i].isFinal) {
-                        transcript += event.results[i][0].transcript + ' ';
-                    }
-                }
-
-                if (transcript.trim()) {
-                    const formattedSpeech = parsePunctuation(transcript.trim());
-                    if (lastFocusedInput) {
-                        insertTextAtCursor(lastFocusedInput, formattedSpeech);
-                    } else {
-                        showToast("Cliquez dans un champ de texte pour y dicter votre texte.", "info");
-                    }
-                }
-            };
-
-            recognition.onerror = (event) => {
-                if (event.error === 'not-allowed') {
-                    showToast("Accès au microphone refusé.", "error");
-                    stopSTT();
-                } else if (event.error !== 'no-speech') {
-                    console.error("STT error:", event.error);
-                }
-            };
-
-            recognition.onend = () => {
-                if (isSTTActive) {
-                    try { recognition.start(); } catch(e) {}
-                } else {
-                    updateSTTUI(false);
-                }
-            };
-
-            return true;
-        }
-
-        function insertTextAtCursor(input, text) {
-            const start = input.selectionStart ?? input.value.length;
-            const end = input.selectionEnd ?? input.value.length;
-            const currentVal = input.value;
-
-            let textToInsert = text;
-            if (start > 0 && currentVal[start - 1] !== ' ' && currentVal[start - 1] !== '\n' && !textToInsert.match(/^[,\.!\?:;]/)) {
-                textToInsert = ' ' + textToInsert;
-            }
-
-            input.value = currentVal.substring(0, start) + textToInsert + currentVal.substring(end);
-            input.selectionStart = input.selectionEnd = start + textToInsert.length;
-
-            input.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-
-        function toggleSpeechToText() {
-            if (isSTTActive) {
-                stopSTT();
-            } else {
-                startSTT();
-            }
-        }
-
-        function startSTT() {
-            if (!recognition && !initSpeechToText()) return;
-
-            try {
-                recognition.start();
-                isSTTActive = true;
-                updateSTTUI(true);
-                showToast("Dictée vocale activée ! Cliquez sur un champ et parlez.");
-            } catch(e) {
-                console.error("Erreur lancement STT:", e);
-            }
-        }
-
-        function stopSTT() {
-            isSTTActive = false;
-            if (recognition) {
-                try { recognition.stop(); } catch(e) {}
-            }
-            if (lastFocusedInput) {
-                lastFocusedInput.classList.remove('ring-2', 'ring-red-400');
-            }
-            updateSTTUI(false);
-            showToast("Dictée vocale désactivée.", "info");
-        }
-
-        function updateSTTUI(active) {
-            const btn = document.getElementById('stt-toggle-btn');
-            const icon = document.getElementById('stt-icon');
-            const statusText = document.getElementById('stt-status-text');
-
-            if (!btn || !icon) return;
-
-            if (active) {
-                btn.classList.remove('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
-                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
-                icon.className = "fa-solid fa-microphone text-white mr-1.5";
-                if (statusText) statusText.innerText = "Dictée activée";
-                if (lastFocusedInput) lastFocusedInput.classList.add('ring-2', 'ring-red-400');
-            } else {
-                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
-                btn.classList.add('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
-                icon.className = "fa-solid fa-microphone text-neutral-500 mr-1.5";
-                if (statusText) statusText.innerText = "Dictée";
-            }
-        }
-
-        // Saisie et vérification du code
-        function promptCodeInput() {
-            const code = prompt("Veuillez saisir votre code :");
-            if (code === null) return; // Annulé
-
-            const cleanCode = code.replace(/\s+/g, '').trim();
-            if (cleanCode === '123') {
-                loadExampleDomJuan();
-            } else if (cleanCode === '1' || cleanCode === '01') {
-                loadExampleBaudelaire();
-            } else {
-                showToast("Code invalide.", "error");
-            }
-        }
-
-        // Notifications (Toasts)
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `pointer-events-auto flex items-center space-x-2 px-3 py-2 rounded shadow-md text-xs font-medium text-white transition-all transform duration-200 translate-y-2 opacity-0 ${
-                type === 'success' ? 'bg-neutral-900' : type === 'error' ? 'bg-red-600' : 'bg-neutral-700'
-            }`;
-            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-circle-exclamation'} text-xs"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'translate-y-2');
-                setTimeout(() => toast.remove(), 200);
-            }, 3000);
-        }
-
-        // Tab Navigation
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('border-neutral-900', 'text-neutral-900', 'bg-white');
-                btn.classList.add('border-transparent', 'text-neutral-500');
+            const tabs = ['intro', 'text', 'analysis', 'conclusion', 'export'];
+            
+            tabs.forEach(id => {
+                const contentEl = document.getElementById(`tab-${id}`);
+                const btnEl = document.getElementById(`tab-btn-${id}`);
+                
+                if (contentEl) {
+                    if (id === tabId) {
+                        contentEl.classList.remove('hidden');
+                    } else {
+                        contentEl.classList.add('hidden');
+                    }
+                }
+                
+                if (btnEl) {
+                    if (id === tabId) {
+                        btnEl.classList.add('border-neutral-900', 'text-neutral-900', 'bg-white', 'font-semibold');
+                        btnEl.classList.remove('border-transparent', 'text-neutral-500');
+                    } else {
+                        btnEl.classList.remove('border-neutral-900', 'text-neutral-900', 'bg-white', 'font-semibold');
+                        btnEl.classList.add('border-transparent', 'text-neutral-500');
+                    }
+                }
             });
-
-            const activeTab = document.getElementById(`tab-${tabId}`);
-            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
-
-            if (activeTab && activeBtn) {
-                activeTab.classList.remove('hidden');
-                activeBtn.classList.remove('border-transparent', 'text-neutral-500');
-                activeBtn.classList.add('border-neutral-900', 'text-neutral-900', 'bg-white');
-            }
 
             if (tabId === 'export') {
                 renderExportSheet();
             }
         }
 
-        // Introduction Preview
-        function updateIntroPreview() {
-            const author = document.getElementById('intro-author').value.trim();
-            const work = document.getElementById('intro-work').value.trim();
-            const extract = document.getElementById('intro-extract').value.trim();
-            const movementLit = document.getElementById('intro-movement-lit').value.trim();
-            const problem = document.getElementById('intro-problem').value.trim();
-            const plan = document.getElementById('intro-plan').value.trim();
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
 
-            studyData.intro = { author, work, extract, movementLit, problem, plan };
+            const toast = document.createElement('div');
+            
+            let bgClass = "bg-neutral-900 text-white";
+            let iconClass = "fa-solid fa-circle-info text-sky-400";
+
+            if (type === 'error') {
+                bgClass = "bg-red-900 text-white";
+                iconClass = "fa-solid fa-circle-exclamation text-red-400";
+            } else if (type === 'success') {
+                bgClass = "bg-emerald-900 text-white";
+                iconClass = "fa-solid fa-circle-check text-emerald-400";
+            }
+
+            toast.className = `pointer-events-auto flex items-center space-x-2 px-4 py-3 rounded-lg shadow-lg text-xs transition-all transform translate-y-2 opacity-0 duration-200 ${bgClass}`;
+            toast.innerHTML = `<i class="${iconClass} text-sm"></i><span>${escapeHtml(message)}</span>`;
+
+            container.appendChild(toast);
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-2', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => {
+                    if (toast.parentNode) toast.parentNode.removeChild(toast);
+                }, 200);
+            }, 3000);
+        }
+
+        function toggleSpeechToText() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("La dictée vocale n'est pas supportée par votre navigateur.", "error");
+                return;
+            }
+            
+            if (isDictating && recognition) {
+                recognition.stop();
+                isDictating = false;
+                updateDictationUI(false);
+                showToast("Dictée vocale désactivée.", "info");
+                return;
+            }
+
+            try {
+                recognition = new SpeechRecognition();
+                recognition.lang = 'fr-FR';
+                recognition.continuous = true;
+                recognition.interimResults = false;
+
+                recognition.onstart = function() {
+                    isDictating = true;
+                    updateDictationUI(true);
+                    showToast("Dictée vocale activée. Parlez maintenant...", "success");
+                };
+
+                recognition.onresult = function(event) {
+                    const current = event.resultIndex;
+                    const transcript = event.results[current][0].transcript;
+                    
+                    const activeEl = document.activeElement;
+                    if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+                        const start = activeEl.selectionStart || activeEl.value.length;
+                        const end = activeEl.selectionEnd || activeEl.value.length;
+                        const textBefore = activeEl.value.substring(0, start);
+                        const textAfter = activeEl.value.substring(end);
+                        activeEl.value = textBefore + (textBefore && !textBefore.endsWith(' ') ? ' ' : '') + transcript + textAfter;
+                        activeEl.dispatchEvent(new Event('input', { bubbles: true }));
+                    } else {
+                        showToast("Cliquez dans un champ de texte pour placer la dictée.", "info");
+                    }
+                };
+
+                recognition.onerror = function(event) {
+                    isDictating = false;
+                    updateDictationUI(false);
+                    showToast("Erreur de dictée vocale : " + event.error, "error");
+                };
+
+                recognition.onend = function() {
+                    if (isDictating) {
+                        try { recognition.start(); } catch(e) { updateDictationUI(false); }
+                    } else {
+                        updateDictationUI(false);
+                    }
+                };
+
+                recognition.start();
+            } catch(err) {
+                showToast("Impossible de démarrer la dictée vocale.", "error");
+                updateDictationUI(false);
+            }
+        }
+
+        function updateDictationUI(active) {
+            const btn = document.getElementById('stt-toggle-btn');
+            const icon = document.getElementById('stt-icon');
+            const text = document.getElementById('stt-status-text');
+            if (!btn || !icon || !text) return;
+
+            if (active) {
+                btn.classList.add('bg-red-100', 'text-red-700', 'border-red-300', 'animate-pulse');
+                btn.classList.remove('bg-neutral-100', 'text-neutral-700', 'border-neutral-200');
+                icon.className = 'fa-solid fa-microphone text-red-600 mr-1.5';
+                text.textContent = 'En écoute...';
+            } else {
+                btn.classList.remove('bg-red-100', 'text-red-700', 'border-red-300', 'animate-pulse');
+                btn.classList.add('bg-neutral-100', 'text-neutral-700', 'border-neutral-200');
+                icon.className = 'fa-solid fa-microphone text-neutral-500 mr-1.5';
+                text.textContent = 'Dictée';
+            }
+        }
+
+        function promptCodeInput() {
+            const code = prompt("Saisissez un code d'étude (ex: 123 pour Dom Juan, 000 pour L'Albatros) :");
+            if (!code) return;
+
+            const trimmed = code.trim();
+            if (trimmed === '123') {
+                loadExampleDomJuan();
+            } else if (trimmed === '000') {
+                loadExampleBaudelaire();
+            } else {
+                showToast("Code inconnu. Essayez 123 (Dom Juan) ou 000 (L'Albatros).", "error");
+            }
+        }
+
+        function manualSaveLocal() {
+            autoSave();
+            showToast("Étude sauvegardée dans le navigateur !", "success");
+        }
+
+        function updateIntroPreview() {
+            if (!studyData.intro) {
+                studyData.intro = { author: "", work: "", extract: "", movementLit: "", problem: "", plan: "" };
+            }
+
+            studyData.intro.author = document.getElementById('intro-author')?.value || "";
+            studyData.intro.work = document.getElementById('intro-work')?.value || "";
+            studyData.intro.extract = document.getElementById('intro-extract')?.value || "";
+            studyData.intro.movementLit = document.getElementById('intro-movement-lit')?.value || "";
+            studyData.intro.problem = document.getElementById('intro-problem')?.value || "";
+            studyData.intro.plan = document.getElementById('intro-plan')?.value || "";
+
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            const parts = [author, work, extract, movementLit, problem, plan].filter(p => p && p.trim().length > 0);
 
             const previewContainer = document.getElementById('assembled-intro-preview');
-            const parts = [author, work, extract, movementLit, problem, plan].filter(Boolean);
-            
+            const wordCountEl = document.getElementById('intro-word-count');
+
             if (parts.length === 0) {
-                previewContainer.innerHTML = `<p class="text-neutral-400 italic text-center py-12 font-sans text-xs">Remplissez les étapes à gauche pour voir l'introduction s'assembler ici.</p>`;
-                document.getElementById('intro-word-count').innerText = "0 mots";
+                if (previewContainer) {
+                    previewContainer.innerHTML = `<p class="text-neutral-400 italic text-center py-12 font-sans text-xs">Remplissez les étapes à gauche pour voir l'introduction s'assembler ici.</p>`;
+                }
+                if (wordCountEl) wordCountEl.textContent = "0 mots";
                 return;
             }
 
             const fullText = parts.join(" ");
-            previewContainer.innerText = fullText;
+            if (previewContainer) {
+                previewContainer.innerHTML = `<p class="whitespace-pre-line text-justify">${escapeHtml(fullText)}</p>`;
+            }
 
-            const wordCount = fullText.split(/\s+/).filter(w => w.length > 0).length;
-            document.getElementById('intro-word-count').innerText = `${wordCount} mots`;
+            if (wordCountEl) {
+                const words = fullText.trim().split(/\s+/).filter(Boolean).length;
+                wordCountEl.textContent = `${words} mot${words > 1 ? 's' : ''}`;
+            }
         }
 
         function copyIntroText() {
-            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
-            const fullText = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
-            if (!fullText) return;
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro || {};
+            const fullText = [author, work, extract, movementLit, problem, plan].filter(p => p && p.trim().length > 0).join(" ");
+            
+            if (!fullText) {
+                showToast("Aucune introduction à copier.", "error");
+                return;
+            }
 
-            navigator.clipboard.writeText(fullText).then(() => {
-                showToast("Introduction copiée !");
+            copyToClipboard(fullText, "Introduction copiée !");
+        }
+
+        function getQuotes(item) {
+            if (!item) return [''];
+            if (Array.isArray(item.quotes) && item.quotes.length > 0) {
+                return item.quotes;
+            }
+            if (typeof item.quote === 'string' && item.quote.trim().length > 0) {
+                return [item.quote];
+            }
+            return [''];
+        }
+
+        function setActiveRow(index) {
+            activeRowIndex = index;
+            const rows = document.querySelectorAll('#analysis-rows-container tr');
+            rows.forEach((r, idx) => {
+                if (idx === index) {
+                    r.classList.add('ring-1', 'ring-neutral-900', 'bg-amber-50/30');
+                } else {
+                    r.classList.remove('ring-1', 'ring-neutral-900', 'bg-amber-50/30');
+                }
             });
         }
 
-        // Analysis Items Logic (Separators + Process Rows)
-        function addAxisSeparator() {
-            studyData.analysisItems.push({
+        function addAxisSeparator(targetIdx = null) {
+            const newItem = {
                 type: 'separator',
                 title: 'Nouveau Mouvement / Changement d\'axe'
-            });
+            };
+            
+            let insertAt = studyData.analysisItems.length;
+            if (targetIdx !== null && targetIdx >= 0) {
+                insertAt = targetIdx + 1;
+            } else if (activeRowIndex >= 0 && activeRowIndex < studyData.analysisItems.length) {
+                insertAt = activeRowIndex + 1;
+            }
+
+            studyData.analysisItems.splice(insertAt, 0, newItem);
+            activeRowIndex = insertAt;
             renderAnalysisTable();
             autoSave();
         }
 
-        function addProcessRow() {
-            studyData.analysisItems.push({
+        function addProcessRow(targetIdx = null) {
+            const newItem = {
                 type: 'process',
-                quote: '',
+                line: '',
+                quotes: [''],
                 process: '',
                 effect: ''
-            });
+            };
+
+            let insertAt = studyData.analysisItems.length;
+            if (targetIdx !== null && targetIdx >= 0) {
+                insertAt = targetIdx + 1;
+            } else if (activeRowIndex >= 0 && activeRowIndex < studyData.analysisItems.length) {
+                insertAt = activeRowIndex + 1;
+            }
+
+            studyData.analysisItems.splice(insertAt, 0, newItem);
+            activeRowIndex = insertAt;
             renderAnalysisTable();
+            autoSave();
+        }
+
+        function addQuoteToItem(itemIndex) {
+            if (!studyData.analysisItems[itemIndex]) return;
+            const quotes = getQuotes(studyData.analysisItems[itemIndex]);
+            quotes.push('');
+            studyData.analysisItems[itemIndex].quotes = quotes;
+            renderAnalysisTable();
+            autoSave();
+        }
+
+        function removeQuoteFromItem(itemIndex, quoteIndex) {
+            if (!studyData.analysisItems[itemIndex]) return;
+            const quotes = getQuotes(studyData.analysisItems[itemIndex]);
+            if (quotes.length > 1) {
+                quotes.splice(quoteIndex, 1);
+                studyData.analysisItems[itemIndex].quotes = quotes;
+                renderAnalysisTable();
+                autoSave();
+            }
+        }
+
+        function updateQuoteField(itemIndex, quoteIndex, value) {
+            if (!studyData.analysisItems[itemIndex]) return;
+            const quotes = getQuotes(studyData.analysisItems[itemIndex]);
+            quotes[quoteIndex] = value;
+            studyData.analysisItems[itemIndex].quotes = quotes;
+            studyData.analysisItems[itemIndex].quote = quotes.join('\n');
             autoSave();
         }
 
         function removeAnalysisItem(index) {
             studyData.analysisItems.splice(index, 1);
+            if (activeRowIndex === index) activeRowIndex = -1;
+            else if (activeRowIndex > index) activeRowIndex--;
+            renderAnalysisTable();
+            autoSave();
+        }
+
+        function moveAnalysisItem(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= studyData.analysisItems.length) return;
+
+            const temp = studyData.analysisItems[index];
+            studyData.analysisItems[index] = studyData.analysisItems[newIndex];
+            studyData.analysisItems[newIndex] = temp;
+
+            activeRowIndex = newIndex;
             renderAnalysisTable();
             autoSave();
         }
@@ -718,50 +707,102 @@
 
         function renderAnalysisTable() {
             const tbody = document.getElementById('analysis-rows-container');
+            if (!tbody) return;
             tbody.innerHTML = "";
 
             if (studyData.analysisItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-neutral-400 italic">Aucun procédé ni axe ajouté. Cliquez sur un des boutons ci-dessus pour commencer.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-neutral-400 italic">Aucun procédé ni axe ajouté. Cliquez sur un des boutons ci-dessus pour commencer.</td></tr>`;
                 return;
             }
 
+            const total = studyData.analysisItems.length;
+
             studyData.analysisItems.forEach((item, idx) => {
                 const tr = document.createElement('tr');
+                tr.setAttribute('onclick', `setActiveRow(${idx})`);
+
+                const reorderButtons = `
+                    <div class="flex flex-col items-center justify-center space-y-0.5">
+                        <button onclick="event.stopPropagation(); moveAnalysisItem(${idx}, -1)" ${idx === 0 ? 'disabled class="opacity-20 cursor-not-allowed text-neutral-400"' : 'class="text-neutral-500 hover:text-neutral-900 p-0.5"'} title="Monter">
+                            <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                        </button>
+                        <button onclick="event.stopPropagation(); moveAnalysisItem(${idx}, 1)" ${idx === total - 1 ? 'disabled class="opacity-20 cursor-not-allowed text-neutral-400"' : 'class="text-neutral-500 hover:text-neutral-900 p-0.5"'} title="Descendre">
+                            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
 
                 if (item.type === 'separator') {
-                    tr.className = "bg-neutral-900 text-white border-y border-neutral-800";
+                    tr.className = `bg-neutral-900 text-white border-y border-neutral-800 ${idx === activeRowIndex ? 'ring-2 ring-neutral-900' : ''}`;
                     tr.innerHTML = `
-                        <td colspan="3" class="p-2.5">
+                        <td class="p-2 text-center align-middle">${reorderButtons}</td>
+                        <td colspan="4" class="p-2.5">
                             <div class="flex items-center space-x-2">
-                                <i class="fa-solid fa-bookmark text-neutral-400 text-xs pl-2"></i>
+                                <i class="fa-solid fa-bookmark text-neutral-400 text-xs pl-1"></i>
                                 <input type="text" value="${escapeHtml(item.title)}" 
+                                       onfocus="setActiveRow(${idx})"
                                        oninput="updateItemField(${idx}, 'title', this.value)" 
                                        placeholder="Nom du mouvement ou de l'axe..." 
                                        class="w-full bg-transparent font-mono text-xs font-bold text-white focus:outline-none placeholder-neutral-500">
                             </div>
                         </td>
                         <td class="p-2 text-center align-middle">
-                            <button onclick="removeAnalysisItem(${idx})" class="text-neutral-400 hover:text-white p-1" title="Supprimer cet axe">
-                                <i class="fa-solid fa-times text-xs"></i>
-                            </button>
+                            <div class="flex items-center justify-center space-x-1">
+                                <button onclick="event.stopPropagation(); addProcessRow(${idx})" class="text-neutral-400 hover:text-white p-1" title="Insérer un procédé sous cet axe">
+                                    <i class="fa-solid fa-plus text-xs"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); removeAnalysisItem(${idx})" class="text-neutral-400 hover:text-red-400 p-1" title="Supprimer cet axe">
+                                    <i class="fa-solid fa-times text-xs"></i>
+                                </button>
+                            </div>
                         </td>
                     `;
                 } else {
-                    tr.className = "hover:bg-neutral-50/60 transition";
+                    const quotes = getQuotes(item);
+                    
+                    let quotesHtml = `<div class="space-y-1.5">`;
+                    quotes.forEach((q, qIdx) => {
+                        quotesHtml += `
+                            <div class="flex items-center space-x-1">
+                                <textarea onfocus="setActiveRow(${idx})" oninput="updateQuoteField(${idx}, ${qIdx}, this.value)" rows="1" placeholder="Citation ${quotes.length > 1 ? (qIdx + 1) : ''}..." class="w-full p-1.5 border border-neutral-200 rounded font-serif text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none resize-y">${escapeHtml(q)}</textarea>
+                                ${quotes.length > 1 ? `
+                                    <button onclick="event.stopPropagation(); removeQuoteFromItem(${idx}, ${qIdx})" class="text-neutral-300 hover:text-red-600 p-1" title="Supprimer cette citation">
+                                        <i class="fa-solid fa-xmark text-xs"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        `;
+                    });
+                    quotesHtml += `
+                        <button onclick="event.stopPropagation(); addQuoteToItem(${idx})" class="mt-1 text-[10px] text-neutral-500 hover:text-neutral-900 font-medium flex items-center">
+                            <i class="fa-solid fa-plus mr-1 text-[9px]"></i> + Citation
+                        </button>
+                    </div>`;
+
+                    tr.className = `hover:bg-neutral-50/60 transition ${idx === activeRowIndex ? 'ring-1 ring-neutral-900 bg-amber-50/30' : ''}`;
                     tr.innerHTML = `
+                        <td class="p-2 text-center align-middle">${reorderButtons}</td>
                         <td class="p-2 align-top">
-                            <textarea oninput="updateItemField(${idx}, 'quote', this.value)" rows="2" placeholder="Citation ou réplique..." class="w-full p-2 border border-neutral-200 rounded font-serif text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.quote)}</textarea>
+                            <input type="text" onfocus="setActiveRow(${idx})" oninput="updateItemField(${idx}, 'line', this.value)" value="${escapeHtml(item.line || '')}" placeholder="l. 1-3" class="w-full p-2 border border-neutral-200 rounded font-mono text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">
                         </td>
                         <td class="p-2 align-top">
-                            <textarea oninput="updateItemField(${idx}, 'process', this.value)" rows="2" placeholder="Procédé / Figure / Syntaxe..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.process)}</textarea>
+                            ${quotesHtml}
                         </td>
                         <td class="p-2 align-top">
-                            <textarea oninput="updateItemField(${idx}, 'effect', this.value)" rows="2" placeholder="Interprétation..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.effect)}</textarea>
+                            <textarea onfocus="setActiveRow(${idx})" oninput="updateItemField(${idx}, 'process', this.value)" rows="2" placeholder="Procédé / Figure / Syntaxe..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.process || '')}</textarea>
+                        </td>
+                        <td class="p-2 align-top">
+                            <textarea onfocus="setActiveRow(${idx})" oninput="updateItemField(${idx}, 'effect', this.value)" rows="2" placeholder="Interprétation..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.effect || '')}</textarea>
                         </td>
                         <td class="p-2 align-top text-center pt-3">
-                            <button onclick="removeAnalysisItem(${idx})" class="text-neutral-300 hover:text-red-600 p-1 transition" title="Supprimer la ligne">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
+                            <div class="flex items-center justify-center space-x-1">
+                                <button onclick="event.stopPropagation(); addProcessRow(${idx})" class="text-neutral-400 hover:text-neutral-900 p-1 transition" title="Insérer un procédé en dessous">
+                                    <i class="fa-solid fa-circle-plus text-xs"></i>
+                                </button>
+                                <button onclick="event.stopPropagation(); removeAnalysisItem(${idx})" class="text-neutral-300 hover:text-red-600 p-1 transition" title="Supprimer la ligne">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
                         </td>
                     `;
                 }
@@ -770,153 +811,315 @@
             });
         }
 
-        // Render Revision Sheet
-        function renderExportSheet() {
-            document.getElementById('export-title').innerText = studyData.title || "Titre de l'Étude";
-            document.getElementById('export-author-work').innerText = studyData.authorWork || "Auteur - Œuvre";
-            document.getElementById('export-course').innerText = studyData.course ? `Parcours : ${studyData.course}` : "";
-
-            // Full text
-            const textSec = document.getElementById('export-text-section');
-            if (studyData.fullText && studyData.fullText.trim()) {
-                textSec.classList.remove('hidden');
-                document.getElementById('export-full-text').innerText = studyData.fullText;
-            } else {
-                textSec.classList.add('hidden');
-            }
-
-            // Intro
-            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
-            const fullIntro = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
-            document.getElementById('export-intro').innerText = fullIntro || "Aucune introduction renseignée.";
-
-            // Analysis Table with embedded movement separators
-            const tbody = document.getElementById('export-table-body');
-            tbody.innerHTML = "";
-
-            if (studyData.analysisItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-neutral-400 italic">Aucune analyse renseignée.</td></tr>`;
-            } else {
-                studyData.analysisItems.forEach(item => {
-                    const tr = document.createElement('tr');
-                    if (item.type === 'separator') {
-                        tr.className = "bg-neutral-100 border-y-2 border-neutral-300";
-                        tr.innerHTML = `
-                            <td colspan="3" class="p-2 font-mono text-xs font-bold text-neutral-900">
-                                <i class="fa-solid fa-bookmark mr-1.5 text-neutral-500"></i> ${escapeHtml(item.title)}
-                            </td>
-                        `;
-                    } else {
-                        tr.className = "border-b border-neutral-200";
-                        tr.innerHTML = `
-                            <td class="p-2 border-r border-neutral-300 font-serif text-xs text-neutral-900 align-top">"${escapeHtml(item.quote)}"</td>
-                            <td class="p-2 border-r border-neutral-300 text-xs text-neutral-800 align-top bg-neutral-50/50">${escapeHtml(item.process)}</td>
-                            <td class="p-2 text-xs text-neutral-800 align-top">${escapeHtml(item.effect)}</td>
-                        `;
-                    }
-                    tbody.appendChild(tr);
-                });
-            }
-
-            // Conclusion
-            document.getElementById('export-conclusion-summary').innerText = studyData.conclusion.summary || "--";
-            document.getElementById('export-conclusion-opening').innerText = studyData.conclusion.opening || "--";
+        function toggleExtractVisibility(checked) {
+            studyData.showExtract = !!checked;
+            autoSave();
+            renderExportSheet();
         }
 
-        // Markdown Copy
+        function setExportDocMode(mode) {
+            studyData.docMode = mode;
+            
+            const btnFiche = document.getElementById('mode-btn-fiche');
+            const btnClassic = document.getElementById('mode-btn-classic');
+
+            if (btnFiche && btnClassic) {
+                if (mode === 'classic') {
+                    btnClassic.className = "px-2.5 py-1 text-xs font-medium rounded transition bg-white text-neutral-900 shadow-2xs font-semibold";
+                    btnFiche.className = "px-2.5 py-1 text-xs font-medium rounded transition text-neutral-600 hover:text-neutral-900";
+                } else {
+                    btnFiche.className = "px-2.5 py-1 text-xs font-medium rounded transition bg-white text-neutral-900 shadow-2xs font-semibold";
+                    btnClassic.className = "px-2.5 py-1 text-xs font-medium rounded transition text-neutral-600 hover:text-neutral-900";
+                }
+            }
+
+            autoSave();
+            renderExportSheet();
+        }
+
+        function renderExportSheet() {
+            const sheet = document.getElementById('export-sheet');
+            if (!sheet) return;
+
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro || {};
+            const fullIntro = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
+
+            const showExtract = studyData.showExtract && studyData.fullText && studyData.fullText.trim();
+
+            if (studyData.docMode === 'classic') {
+                // Classic Google Doc Style
+                let tableRowsHtml = "";
+                if (!studyData.analysisItems || studyData.analysisItems.length === 0) {
+                    tableRowsHtml = `<tr><td colspan="4" class="p-3 text-center text-neutral-400 italic border border-neutral-300">Aucune analyse renseignée.</td></tr>`;
+                } else {
+                    studyData.analysisItems.forEach(item => {
+                        if (item.type === 'separator') {
+                            tableRowsHtml += `
+                                <tr class="bg-neutral-100 font-bold border border-neutral-300">
+                                    <td colspan="4" class="p-2 text-neutral-900 font-mono text-xs">
+                                        ${escapeHtml(item.title)}
+                                    </td>
+                                </tr>`;
+                        } else {
+                            const quotes = getQuotes(item).filter(q => q && q.trim().length > 0);
+                            const formattedQuotes = quotes.length > 0 
+                                ? quotes.map(q => `"${escapeHtml(q)}"`).join('<br><br>') 
+                                : '<span class="text-neutral-400">-</span>';
+
+                            tableRowsHtml += `
+                                <tr class="border border-neutral-300 align-top">
+                                    <td class="p-2 border border-neutral-300 font-mono text-xs text-neutral-600 w-16">${escapeHtml(item.line || '-')}</td>
+                                    <td class="p-2 border border-neutral-300 italic font-serif text-xs text-neutral-900 w-1/4">${formattedQuotes}</td>
+                                    <td class="p-2 border border-neutral-300 text-xs text-neutral-800 w-1/3">${escapeHtml(item.process || '')}</td>
+                                    <td class="p-2 border border-neutral-300 text-xs text-neutral-800">${escapeHtml(item.effect || '')}</td>
+                                </tr>`;
+                        }
+                    });
+                }
+
+                sheet.className = "bg-white p-10 sm:p-14 rounded border border-neutral-300 max-w-4xl mx-auto text-neutral-900 font-serif leading-normal shadow-sm";
+                sheet.innerHTML = `
+                    <div class="text-center mb-8 border-b pb-6 border-neutral-300">
+                        <h1 class="text-2xl font-bold font-sans text-neutral-900 mb-2">${escapeHtml(studyData.title || "Étude Linéaire")}</h1>
+                        <p class="text-sm text-neutral-600 font-sans italic">${escapeHtml(studyData.authorWork || "Auteur - Œuvre")} ${studyData.course ? '— ' + escapeHtml(studyData.course) : ''}</p>
+                    </div>
+
+                    ${showExtract ? `
+                    <div class="mb-8">
+                        <h2 class="text-sm font-sans font-bold uppercase tracking-wider text-neutral-800 border-b border-neutral-300 pb-1 mb-3">Extrait du texte</h2>
+                        <p class="text-xs font-serif leading-relaxed italic whitespace-pre-wrap text-neutral-800 pl-4 border-l-2 border-neutral-400 bg-neutral-50/50 py-2">${escapeHtml(studyData.fullText)}</p>
+                    </div>
+                    ` : ''}
+
+                    <div class="mb-8">
+                        <h2 class="text-sm font-sans font-bold uppercase tracking-wider text-neutral-800 border-b border-neutral-300 pb-1 mb-3">1. Introduction</h2>
+                        <p class="text-xs font-serif leading-relaxed text-justify text-neutral-800">${escapeHtml(fullIntro || "Aucune introduction renseignée.")}</p>
+                    </div>
+
+                    <div class="mb-8">
+                        <h2 class="text-sm font-sans font-bold uppercase tracking-wider text-neutral-800 border-b border-neutral-300 pb-1 mb-3">2. Tableau d'Analyse Linéaire</h2>
+                        <table class="w-full text-left border-collapse border border-neutral-300 text-xs font-sans">
+                            <thead>
+                                <tr class="bg-neutral-100 border border-neutral-300 font-bold text-[11px] text-neutral-800">
+                                    <th class="p-2 border border-neutral-300 w-16">Ligne</th>
+                                    <th class="p-2 border border-neutral-300 w-1/4">Citation(s)</th>
+                                    <th class="p-2 border border-neutral-300 w-1/3">Procédé & Grammaire</th>
+                                    <th class="p-2 border border-neutral-300">Interprétation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${tableRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h2 class="text-sm font-sans font-bold uppercase tracking-wider text-neutral-800 border-b border-neutral-300 pb-1 mb-3">3. Conclusion</h2>
+                        <div class="space-y-3 text-xs font-serif">
+                            <p><strong>Bilan :</strong> ${escapeHtml(studyData.conclusion?.summary || "--")}</p>
+                            <p><strong>Ouverture :</strong> ${escapeHtml(studyData.conclusion?.opening || "--")}</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Modern Stylized Sheet Mode
+                let tableRowsHtml = "";
+                if (!studyData.analysisItems || studyData.analysisItems.length === 0) {
+                    tableRowsHtml = `<tr><td colspan="4" class="p-4 text-center text-neutral-400 italic">Aucune analyse renseignée.</td></tr>`;
+                } else {
+                    studyData.analysisItems.forEach(item => {
+                        if (item.type === 'separator') {
+                            tableRowsHtml += `
+                                <tr class="bg-neutral-100 border-y-2 border-neutral-300">
+                                    <td colspan="4" class="p-2 font-mono text-xs font-bold text-neutral-900">
+                                        <i class="fa-solid fa-bookmark mr-1.5 text-neutral-500"></i> ${escapeHtml(item.title)}
+                                    </td>
+                                </tr>`;
+                        } else {
+                            const quotes = getQuotes(item).filter(q => q && q.trim().length > 0);
+                            const formattedQuotes = quotes.length > 0 
+                                ? quotes.map(q => `"${escapeHtml(q)}"`).join('<br><br>') 
+                                : '<span class="text-neutral-400">-</span>';
+
+                            tableRowsHtml += `
+                                <tr class="border-b border-neutral-200">
+                                    <td class="p-2 border-r border-neutral-300 font-mono text-xs text-neutral-500 align-top w-16">${escapeHtml(item.line || '-')}</td>
+                                    <td class="p-2 border-r border-neutral-300 font-serif text-xs text-neutral-900 align-top w-1/4">${formattedQuotes}</td>
+                                    <td class="p-2 border-r border-neutral-300 text-xs text-neutral-800 align-top bg-neutral-50/50 w-1/3">${escapeHtml(item.process || '')}</td>
+                                    <td class="p-2 text-xs text-neutral-800 align-top">${escapeHtml(item.effect || '')}</td>
+                                </tr>`;
+                        }
+                    });
+                }
+
+                sheet.className = "bg-white p-8 sm:p-12 rounded-lg border border-neutral-200 max-w-4xl mx-auto text-neutral-900 print-border-none font-serif";
+                sheet.innerHTML = `
+                    <div class="border-b-2 border-neutral-900 pb-4 mb-6">
+                        <div class="flex justify-between items-baseline">
+                            <h1 class="text-xl font-bold font-sans uppercase tracking-tight text-neutral-900">${escapeHtml(studyData.title || "Titre de l'Étude")}</h1>
+                            <span class="text-xs font-mono text-neutral-600">${escapeHtml(studyData.authorWork || "Auteur - Œuvre")}</span>
+                        </div>
+                        ${studyData.course ? `<div class="text-xs font-mono text-neutral-500 mt-1 italic">Parcours : ${escapeHtml(studyData.course)}</div>` : ''}
+                    </div>
+
+                    ${showExtract ? `
+                    <div class="mb-6">
+                        <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">Texte de l'extrait</h2>
+                        <div class="text-xs text-neutral-700 leading-relaxed whitespace-pre-wrap italic bg-neutral-50 p-3 rounded border border-neutral-100">${escapeHtml(studyData.fullText)}</div>
+                    </div>
+                    ` : ''}
+
+                    <div class="mb-6">
+                        <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">1. Introduction</h2>
+                        <p class="text-xs text-neutral-800 leading-relaxed text-justify">${escapeHtml(fullIntro || "Aucune introduction renseignée.")}</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-3 border-b border-neutral-200 pb-1">2. Tableau d'Analyse Linéaire</h2>
+                        <table class="w-full text-left border-collapse border border-neutral-300 text-xs font-sans">
+                            <thead>
+                                <tr class="bg-neutral-100 border-b border-neutral-300 font-mono text-[10px] text-neutral-700 uppercase">
+                                    <th class="p-2 border-r border-neutral-300 w-16">Ligne</th>
+                                    <th class="p-2 border-r border-neutral-300 w-1/4">Citation(s)</th>
+                                    <th class="p-2 border-r border-neutral-300 w-1/3">Procédé / Analyse</th>
+                                    <th class="p-2">Interprétation</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-neutral-300">
+                                ${tableRowsHtml}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div>
+                        <h2 class="text-xs font-mono font-bold uppercase tracking-wider text-neutral-500 mb-2 border-b border-neutral-200 pb-1">3. Conclusion</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                            <div class="p-3 bg-neutral-50 border border-neutral-200 rounded">
+                                <span class="font-mono font-bold uppercase text-[10px] text-neutral-500 block mb-1">Bilan & Réponse à la problématique :</span>
+                                <p class="text-neutral-800 leading-relaxed">${escapeHtml(studyData.conclusion?.summary || "--")}</p>
+                            </div>
+                            <div class="p-3 bg-neutral-50 border border-neutral-200 rounded">
+                                <span class="font-mono font-bold uppercase text-[10px] text-neutral-500 block mb-1">Ouverture :</span>
+                                <p class="text-neutral-800 leading-relaxed">${escapeHtml(studyData.conclusion?.opening || "--")}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
         function copyMarkdown() {
             let md = `# ${studyData.title || "Étude Linéaire"}\n`;
             md += `**Auteur / Œuvre :** ${studyData.authorWork || ""}\n`;
             md += `**Parcours :** ${studyData.course || ""}\n\n`;
 
             md += `## 1. Introduction\n`;
-            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro || {};
             md += `${[author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ")}\n\n`;
 
-            if (studyData.fullText && studyData.fullText.trim()) {
+            if (studyData.showExtract && studyData.fullText && studyData.fullText.trim()) {
                 md += `## Extrait\n\`\`\`\n${studyData.fullText}\n\`\`\`\n\n`;
             }
 
             md += `## 2. Tableau d'Analyse Linéaire\n\n`;
-            md += `| Citation / Passage | Procédé / Analyse | Interprétation |\n`;
-            md += `| :--- | :--- | :--- |\n`;
+            md += `| Ligne | Citation(s) | Procédé / Analyse | Interprétation |\n`;
+            md += `| :--- | :--- | :--- | :--- |\n`;
             
-            studyData.analysisItems.forEach(item => {
-                if (item.type === 'separator') {
-                    md += `| **${item.title.replace(/\|/g, '-')}** | | |\n`;
-                } else {
-                    md += `| ${item.quote.replace(/\n/g, ' ')} | ${item.process.replace(/\n/g, ' ')} | ${item.effect.replace(/\n/g, ' ')} |\n`;
-                }
-            });
+            if (studyData.analysisItems) {
+                studyData.analysisItems.forEach(item => {
+                    if (item.type === 'separator') {
+                        md += `| **${(item.title || '').replace(/\|/g, '-')}** | | | |\n`;
+                    } else {
+                        const quotesStr = getQuotes(item)
+                            .filter(q => q && q.trim())
+                            .map(q => q.replace(/\n/g, ' '))
+                            .join(' <br> ');
+                        md += `| ${item.line || ''} | ${quotesStr} | ${(item.process || '').replace(/\n/g, ' ')} | ${(item.effect || '').replace(/\n/g, ' ')} |\n`;
+                    }
+                });
+            }
 
             md += `\n## 3. Conclusion\n`;
-            md += `**Bilan :** ${studyData.conclusion.summary || ""}\n`;
-            md += `**Ouverture :** ${studyData.conclusion.opening || ""}\n`;
+            md += `**Bilan :** ${studyData.conclusion?.summary || ""}\n`;
+            md += `**Ouverture :** ${studyData.conclusion?.opening || ""}\n`;
 
-            navigator.clipboard.writeText(md).then(() => {
-                showToast("Fiche copiée au format Markdown !");
-            });
+            copyToClipboard(md, "Fiche copiée au format Markdown !");
         }
 
-        // LocalStorage Logic
-        function autoSave() {
-            studyData.title = document.getElementById('doc-title').value;
-            studyData.authorWork = document.getElementById('doc-author-work').value;
-            studyData.course = document.getElementById('doc-course').value;
-            studyData.fullText = document.getElementById('full-text-input').value;
+        function copyToClipboard(text, successMsg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast(successMsg, "success");
+                }).catch(() => {
+                    fallbackCopy(text, successMsg);
+                });
+            } else {
+                fallbackCopy(text, successMsg);
+            }
+        }
 
-            studyData.conclusion.summary = document.getElementById('conclusion-summary').value;
-            studyData.conclusion.opening = document.getElementById('conclusion-opening').value;
+        function fallbackCopy(text, successMsg) {
+            const textarea = document.createElement("textarea");
+            textarea.value = text;
+            textarea.style.position = "fixed";
+            textarea.style.opacity = "0";
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                showToast(successMsg, "success");
+            } catch (err) {
+                showToast("Échec de la copie.", "error");
+            }
+            document.body.removeChild(textarea);
+        }
+
+        function autoSave() {
+            studyData.title = document.getElementById('doc-title')?.value || "";
+            studyData.authorWork = document.getElementById('doc-author-work')?.value || "";
+            studyData.course = document.getElementById('doc-course')?.value || "";
+            studyData.fullText = document.getElementById('full-text-input')?.value || "";
+
+            if (!studyData.conclusion) studyData.conclusion = {};
+            studyData.conclusion.summary = document.getElementById('conclusion-summary')?.value || "";
+            studyData.conclusion.opening = document.getElementById('conclusion-opening')?.value || "";
 
             localStorage.setItem('etude_lineaire_bac', JSON.stringify(studyData));
         }
 
-        function manualSaveLocal() {
-            autoSave();
-            showToast("Étude enregistrée localement dans le navigateur !");
-        }
-
-        function loadSavedStudy() {
-            const saved = localStorage.getItem('etude_lineaire_bac');
-            if (saved) {
-                try {
-                    studyData = JSON.parse(saved);
-                    populateInputs();
-                } catch(e) {
-                    createNewStudy();
-                }
-            } else {
-                createNewStudy();
-            }
-        }
-
         function populateInputs() {
-            document.getElementById('doc-title').value = studyData.title || "";
-            document.getElementById('doc-author-work').value = studyData.authorWork || "";
-            document.getElementById('doc-course').value = studyData.course || "";
+            if (document.getElementById('doc-title')) document.getElementById('doc-title').value = studyData.title || "";
+            if (document.getElementById('doc-author-work')) document.getElementById('doc-author-work').value = studyData.authorWork || "";
+            if (document.getElementById('doc-course')) document.getElementById('doc-course').value = studyData.course || "";
 
-            document.getElementById('intro-author').value = studyData.intro?.author || "";
-            document.getElementById('intro-work').value = studyData.intro?.work || "";
-            document.getElementById('intro-extract').value = studyData.intro?.extract || "";
-            document.getElementById('intro-movement-lit').value = studyData.intro?.movementLit || "";
-            document.getElementById('intro-problem').value = studyData.intro?.problem || "";
-            document.getElementById('intro-plan').value = studyData.intro?.plan || "";
+            const toggleExtract = document.getElementById('toggle-show-extract');
+            if (toggleExtract) toggleExtract.checked = !!studyData.showExtract;
 
-            document.getElementById('full-text-input').value = studyData.fullText || "";
+            setExportDocMode(studyData.docMode || 'fiche');
 
-            document.getElementById('conclusion-summary').value = studyData.conclusion?.summary || "";
-            document.getElementById('conclusion-opening').value = studyData.conclusion?.opening || "";
+            if (document.getElementById('intro-author')) document.getElementById('intro-author').value = studyData.intro?.author || "";
+            if (document.getElementById('intro-work')) document.getElementById('intro-work').value = studyData.intro?.work || "";
+            if (document.getElementById('intro-extract')) document.getElementById('intro-extract').value = studyData.intro?.extract || "";
+            if (document.getElementById('intro-movement-lit')) document.getElementById('intro-movement-lit').value = studyData.intro?.movementLit || "";
+            if (document.getElementById('intro-problem')) document.getElementById('intro-problem').value = studyData.intro?.problem || "";
+            if (document.getElementById('intro-plan')) document.getElementById('intro-plan').value = studyData.intro?.plan || "";
+
+            if (document.getElementById('full-text-input')) document.getElementById('full-text-input').value = studyData.fullText || "";
+
+            if (document.getElementById('conclusion-summary')) document.getElementById('conclusion-summary').value = studyData.conclusion?.summary || "";
+            if (document.getElementById('conclusion-opening')) document.getElementById('conclusion-opening').value = studyData.conclusion?.opening || "";
 
             updateIntroPreview();
             renderAnalysisTable();
         }
 
-        // Blank State Creator
         function createNewStudy() {
             studyData = {
                 title: "",
                 authorWork: "",
                 course: "",
+                showExtract: false,
+                docMode: "fiche",
                 intro: { author: "", work: "", extract: "", movementLit: "", problem: "", plan: "" },
                 fullText: "",
                 analysisItems: [],
@@ -925,15 +1128,16 @@
             populateInputs();
             autoSave();
             switchTab('intro');
-            showToast("Nouvelle étude vierge créée", "info");
+            showToast("Nouvelle étude créée", "info");
         }
 
-        // Example Loader 1 : Baudelaire
         function loadExampleBaudelaire() {
             studyData = {
                 title: "L'Albatros",
                 authorWork: "Charles Baudelaire, Les Fleurs du Mal",
                 course: "Alchimie poétique : la boue et l'or",
+                showExtract: true,
+                docMode: "fiche",
                 intro: {
                     author: "Charles Baudelaire (1821-1867) est un poète majeur du XIXe siècle à la croisée du romantisme et du symbolisme.",
                     work: "Les Fleurs du Mal (1857) est son recueil poétique emblématique abordant le Spleen, l'Idéal et la modernité.",
@@ -945,12 +1149,12 @@
                 fullText: "Souvent, pour s'amuser, les hommes d'équipage\nPrennent des albatros, vastes oiseaux des mers,\nQui suivent, indolents compagnons de voyage,\nLe navire glissant sur les gouffres amers...\n\nLe Poète est semblable au prince des nuées\nQui hante la tempête et se rit de l'archer ;\nExilé sur le sol au milieu des huées,\nSes ailes de géant l'empêchent de marcher.",
                 analysisItems: [
                     { type: 'separator', title: '1. Un divertissement cruel : la capture (strophes 1-2)' },
-                    { type: 'process', quote: "Souvent, pour s'amuser", process: "Adverbe de fréquence + complément de but", effect: "Montre la régularité du jeu cruel des marins." },
-                    { type: 'process', quote: "vastes oiseaux des mers", process: "Périphrase méliorative", effect: "Souligne la majesté et la grandeur naturelle de l'oiseau." },
+                    { type: 'process', line: "v. 1", quotes: ["Souvent, pour s'amuser"], process: "Adverbe de fréquence + complément de but", effect: "Montre la régularité du jeu cruel des marins." },
+                    { type: 'process', line: "v. 2", quotes: ["vastes oiseaux des mers"], process: "Périphrase méliorative", effect: "Souligne la majesté et la grandeur naturelle de l'oiseau." },
                     { type: 'separator', title: '2. La métamorphose et la déchéance (strophe 3)' },
-                    { type: 'process', quote: "Ce voyageur ailé, comme il est gauche et veule !", process: "Exclamation + antithèse", effect: "Oppose la grandeur passée à la laideur présente." },
+                    { type: 'process', line: "v. 9", quotes: ["Ce voyageur ailé, comme il est gauche et veule !"], process: "Exclamation + antithèse", effect: "Oppose la grandeur passée à la laideur présente." },
                     { type: 'separator', title: '3. Révélation allégorique (strophe 4)' },
-                    { type: 'process', quote: "Le Poète est semblable au prince des nuées", process: "Comparaison explicite avec majuscule", effect: "Révèle la clé d'interprétation : l'albatros est la figure du poète." }
+                    { type: 'process', line: "v. 13", quotes: ["Le Poète est semblable au prince des nuées"], process: "Comparaison explicite avec majuscule", effect: "Révèle la clé d'interprétation : l'albatros est la figure du poète." }
                 ],
                 conclusion: {
                     summary: "L'Albatros illustre la situation paradoxale du poète : sublime dans l'art et la création, mais inadapté et ridiculisé dans le monde matériel.",
@@ -959,15 +1163,16 @@
             };
             populateInputs();
             autoSave();
-            showToast("Étude chargée avec succès !");
+            showToast("Étude 'L'Albatros' chargée avec succès !");
         }
 
-        // Example Loader 2 : Molière - Dom Juan (Code 123)
         function loadExampleDomJuan() {
             studyData = {
                 title: "Dom Juan (Acte II, Scène 2)",
                 authorWork: "Molière, Dom Juan",
                 course: "Le théâtre du XVIIe siècle : du rire aux larmes / La comédie classique",
+                showExtract: false,
+                docMode: "classic",
                 intro: {
                     author: "Molière (1622-1673), de son vrai nom Jean-Baptiste Poquelin, est le grand maître de la comédie classique au XVIIe siècle. Protégé de Louis XIV, il fustige les travers de la société de son temps.",
                     work: "Dom Juan (1665) est une comédie en cinq actes et en prose. Elle met en scène un grand seigneur libertin qui défie la morale sociale, la religion et le Ciel.",
@@ -976,72 +1181,15 @@
                     problem: "Comment la rhétorique séductrice de Dom Juan parvient-elle à surmonter les réticences morales et sociales de la jeune paysanne Charlotte ?",
                     plan: "1. Les hésitations de Charlotte face à la méfiance populaire (premières répliques).\n2. La stratégie de culpabilisation et la promesse sacrilège du mariage (répliques centrales).\n3. L'entreprise d'éblouissement galant et la capitulation de Charlotte (dernières répliques)."
                 },
-                fullText: `Charlotte
-Aussi vrai, Monsieur, je ne sais comment faire quand vous parlez. Ce que vous dites me fait aise, et j'aurais toutes les envies du monde de vous croire ; mais on m'a toujou dit qu'il ne faut jamais croire les Monsieux, et que vous autres courtisans êtes des enjoleus, qui ne songez qu'à abuser les filles.
-
-Dom Juan
-Je ne suis pas de ces gens-là.
-
-Sganarelle
-Il n'a garde.
-
-Charlotte
-Voyez-vous, Monsieur, il n'y a pas plaisir à se laisser abuser. Je suis une pauvre paysanne ; mais j'ai l'honneur en recommandation, et j'aimerais mieux me voir morte, que de me voir déshonorée.
-
-Dom Juan
-Moi, j'aurais l'âme assez méchante pour abuser une personne comme vous ? Je serais assez lâche pour vous déshonorer ? Non, non : j'ai trop de conscience pour cela. Je vous aime, Charlotte, en tout bien et en tout honneur ; et pour vous montrer que je vous dis vrai, sachez que je n'ai point d'autre dessein que de vous épouser : en voulez-vous un plus grand témoignage ? M'y voilà prêt quand vous voudrez ; et je prends à témoin l'homme que voilà de la parole que je vous donne.
-
-Sganarelle
-Non, non, ne craignez point : il se mariera avec vous tant que vous voudrez.
-
-Dom Juan
-Ah ! Charlotte, je vois bien que vous ne me connaissez pas encore. Vous me faites grand tort de juger de moi par les autres ; et s'il y a des fourbes dans le monde, des gens qui ne cherchent qu'à abuser des filles, vous devez me tirer du nombre, et ne pas mettre en doute la sincérité de ma foi. Et puis votre beauté vous assure de tout. Quand on est faite comme vous, on doit être à couvert de toutes ces sortes de crainte ; vous n'avez point l'air, croyez-moi, d'une personne qu'on abuse ; et pour moi, je l'avoue, je me percerais le cœur de mille coups, si j'avais eu la moindre pensée de vous trahir.
-
-Charlotte
-Mon Dieu ! je ne sais si vous dites vrai, ou non ; mais vous faites que l'on vous croit.
-
-Dom Juan
-Lorsque vous me croirez, vous me rendrez justice assurément, et je vous réitère encore la promesse que je vous ai faite. Ne l'acceptez-vous pas, et ne voulez-vous pas consentir à être ma femme ?
-
-Charlotte
-Oui, pourvu que ma tante le veuille.
-
-Dom Juan
-Touchez donc là, Charlotte, puisque vous le voulez bien de votre part.
-
-Charlotte
-Mais au moins, Monsieur, ne m'allez pas tromper, je vous prie : il y aurait de la conscience à vous, et vous voyez comme j'y vais à la bonne foi.
-
-Dom Juan
-Comment ? Il semble que vous doutiez encore de ma sincérité ! Voulez-vous que je fasse des serments épouvantables ? Que le Ciel…
-
-Charlotte
-Mon Dieu, ne jurez point, je vous crois.
-
-Dom Juan
-Donnez-moi donc un petit baiser pour gage de votre parole.
-
-Charlotte
-Oh ! Monsieur, attendez que je soyons mariés, je vous prie ; après ça, je vous baiserai tant que vous voudrez.
-
-Dom Juan
-Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seulement votre main, et souffrez que, par mille baisers, je lui exprime le ravissement où je suis…`,
+                fullText: `Charlotte : Aussi vrai, Monsieur, je ne sais comment faire quand vous parlez...`,
                 analysisItems: [
-                    { type: 'separator', title: '1. La méfiance populaire confrontée à la séduction (Premières répliques)' },
-                    { type: 'process', quote: "on m'a toujou dit qu'il ne faut jamais croire les Monsieux, et que vous autres courtisans êtes des enjoleus", process: "Grammaire populaire & Patois (« toujou », « Monsieux », « enjoleus »)", effect: "Charlotte exprime la sagesse et le soupçon du peuple face aux seigneurs libertins, tout en trahissant son ingénuité." },
-                    { type: 'process', quote: "j'aimerais mieux me voir morte, que de me voir déshonorée.", process: "Hyperbole dramatique & Antithèse (morte / déshonorée)", effect: "Souligne l'importance fondamentale de l'honneur féminin et du statut social pour une paysanne du XVIIe siècle." },
-                    { type: 'separator', title: '2. La manipulation morale et la fausse promesse de mariage' },
-                    { type: 'process', quote: "Moi, j'aurais l'âme assez méchante... ? Je serais assez lâche... ?", process: "Questions rhétoriques hyperboliques & Feinte indignation", effect: "Dom Juan fait porter la culpabilité sur Charlotte en se présentant comme injustement accusé d'immoralité." },
-                    { type: 'process', quote: "sachez que je n'ai point d'autre dessein que de vous épouser", process: "Promesse sacrilège de mariage", effect: "Révèle la monstruosité libertine de Dom Juan, prêt à commettre un faux serment religieux pour obtenir ce qu'il veut." },
-                    { type: 'process', quote: "Non, non, ne craignez point : il se mariera avec vous tant que vous voudrez.", process: "Ironie tragique et comique de Sganarelle", effect: "Sganarelle confirme le mensonge avec une ambiguïté cynique (« tant que vous voudrez » sous-entend autant de fois qu'il voudra)." },
-                    { type: 'separator', title: '3. L\'éblouissement galant et la capitulation de Charlotte' },
-                    { type: 'process', quote: "je me percerais le cœur de mille coups, si j'avais eu la moindre pensée de vous trahir.", process: "Hyperbole précieuse & Tragique théâtral", effect: "Emprunte le langage de la galanterie précieuse pour éblouir l'esprit d'une paysanne naïve." },
-                    { type: 'process', quote: "Mon Dieu ! je ne sais si vous dites vrai, ou non ; mais vous faites que l'on vous croit.", process: "Aveu d'impuissance & Victoire de la rhétorique", effect: "Consacre la victoire du discours libertin sur la raison : la séduction l'emporte sur le doute." },
-                    { type: 'process', quote: "souffrez que, par mille baisers, je lui exprime le ravissement où je suis…", process: "Glissement du verbe au geste (Langage précieux et sensuel)", effect: "Dom Juan transforme sa victoire verbale en prise de possession physique progressive." }
+                    { type: 'separator', title: '1. La méfiance populaire confrontée à la séduction' },
+                    { type: 'process', line: "l. 1-4", quotes: ["on m'a toujou dit qu'il ne faut jamais croire les Monsieux..."], process: "Grammaire populaire & Patois (« toujou », « Monsieux »)", effect: "Charlotte exprime la sagesse et le soupçon du peuple face aux seigneurs libertins." },
+                    { type: 'process', line: "l. 8-9", quotes: ["j'aimerais mieux me voir morte, que de me voir déshonorée."], process: "Hyperbole dramatique & Antithèse (morte / déshonorée)", effect: "Souligne l'importance fondamentale de l'honneur féminin pour une paysanne." }
                 ],
                 conclusion: {
-                    summary: "Dans cet extrait, Dom Juan déploie toutes les ressources de la rhétorique libertine. En manipulant le sentiment de culpabilité de Charlotte et en transgressant le sacrement du mariage par de faux serments, il triomphe de la résistance populaire.",
-                    opening: "Cette scène de séduction galante et hypocrite peut être rapprochée de la scène du Tartuffe de Molière cherchant à séduire Elmire, ou des Liasons dangereuses de Laclos."
+                    summary: "Dans cet extrait, Dom Juan déploie toutes les ressources de la rhétorique libertine pour triompher de la résistance populaire.",
+                    opening: "Cette scène de séduction galante peut être rapprochée du Tartuffe de Molière ou des Liaisons dangereuses de Laclos."
                 }
             };
             populateInputs();
@@ -1049,31 +1197,37 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
             showToast("Étude 'Dom Juan' chargée avec succès !");
         }
 
-        // Export ZIP Functionality (using JSZip)
         function exportToZip() {
             autoSave();
+            if (typeof JSZip === 'undefined') {
+                showToast("Bibliothèque JSZip non disponible.", "error");
+                return;
+            }
             const zip = new JSZip();
 
-            // 1. JSON State File
             const jsonString = JSON.stringify(studyData, null, 2);
             zip.file("etude.json", jsonString);
 
-            // 2. Standalone HTML Revision Sheet
-            const { author, work, extract, movementLit, problem, plan } = studyData.intro;
+            const { author, work, extract, movementLit, problem, plan } = studyData.intro || {};
             const fullIntro = [author, work, extract, movementLit, problem, plan].filter(Boolean).join(" ");
             
             let tableRowsHtml = "";
-            studyData.analysisItems.forEach(item => {
-                if (item.type === 'separator') {
-                    tableRowsHtml += `<tr style="background:#f5f5f5;"><td colspan="3" style="padding:8px; font-weight:bold; font-family:monospace;">${escapeHtml(item.title)}</td></tr>`;
-                } else {
-                    tableRowsHtml += `<tr>
-                        <td style="padding:8px; border-bottom:1px solid #ddd; font-style:italic;">"${escapeHtml(item.quote)}"</td>
-                        <td style="padding:8px; border-bottom:1px solid #ddd; background:#fafafa;">${escapeHtml(item.process)}</td>
-                        <td style="padding:8px; border-bottom:1px solid #ddd;">${escapeHtml(item.effect)}</td>
-                    </tr>`;
-                }
-            });
+            if (studyData.analysisItems) {
+                studyData.analysisItems.forEach(item => {
+                    if (item.type === 'separator') {
+                        tableRowsHtml += `<tr style="background:#f5f5f5;"><td colspan="4" style="padding:8px; font-weight:bold; font-family:monospace;">${escapeHtml(item.title)}</td></tr>`;
+                    } else {
+                        const quotes = getQuotes(item).filter(q => q && q.trim().length > 0);
+                        const formattedQuotes = quotes.map(q => `"${escapeHtml(q)}"`).join('<br>');
+                        tableRowsHtml += `<tr>
+                            <td style="padding:8px; border-bottom:1px solid #ddd; font-family:monospace; font-size:11px; color:#666;">${escapeHtml(item.line || '-')}</td>
+                            <td style="padding:8px; border-bottom:1px solid #ddd; font-style:italic;">${formattedQuotes}</td>
+                            <td style="padding:8px; border-bottom:1px solid #ddd; background:#fafafa;">${escapeHtml(item.process || '')}</td>
+                            <td style="padding:8px; border-bottom:1px solid #ddd;">${escapeHtml(item.effect || '')}</td>
+                        </tr>`;
+                    }
+                });
+            }
 
             const htmlContent = `<!DOCTYPE html>
 <html lang="fr">
@@ -1092,7 +1246,9 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
 </head>
 <body>
     <h1>${escapeHtml(studyData.title || "Étude Linéaire")}</h1>
-    <div class="meta">${escapeHtml(studyData.authorWork)} | ${escapeHtml(studyData.course)}</div>
+    <div class="meta">${escapeHtml(studyData.authorWork || "")} | ${escapeHtml(studyData.course || "")}</div>
+
+    ${studyData.showExtract && studyData.fullText ? `<h2>Extrait</h2><p style="font-style:italic; font-size:13px; white-space:pre-wrap; background:#f9f9f9; padding:12px; border-left:3px solid #666;">${escapeHtml(studyData.fullText)}</p>` : ''}
 
     <h2>1. Introduction</h2>
     <p style="font-size:14px; text-align:justify;">${escapeHtml(fullIntro)}</p>
@@ -1101,8 +1257,9 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
     <table>
         <thead>
             <tr>
-                <th style="width:30%;">Citation</th>
-                <th style="width:35%;">Procédé / Analyse</th>
+                <th style="width:10%;">Ligne</th>
+                <th style="width:25%;">Citation</th>
+                <th style="width:30%;">Procédé / Analyse</th>
                 <th style="width:35%;">Interprétation</th>
             </tr>
         </thead>
@@ -1112,25 +1269,23 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
     </table>
 
     <h2>3. Conclusion</h2>
-    <div class="box"><strong>Bilan :</strong> ${escapeHtml(studyData.conclusion.summary)}</div>
-    <div class="box"><strong>Ouverture :</strong> ${escapeHtml(studyData.conclusion.opening)}</div>
+    <div class="box"><strong>Bilan :</strong> ${escapeHtml(studyData.conclusion?.summary || "")}</div>
+    <div class="box"><strong>Ouverture :</strong> ${escapeHtml(studyData.conclusion?.opening || "")}</div>
 </body>
 </html>`;
 
             zip.file("fiche_revision.html", htmlContent);
 
-            // Generate ZIP
             zip.generateAsync({ type: "blob" }).then(function (content) {
                 const fileName = (studyData.title ? studyData.title.toLowerCase().replace(/[^a-z0-9]/g, "_") : "etude_lineaire") + ".zip";
                 const link = document.createElement("a");
                 link.href = URL.createObjectURL(content);
                 link.download = fileName;
                 link.click();
-                showToast("Archive ZIP générée avec succès !");
+                showToast("Archive ZIP générée !", "success");
             });
         }
 
-        // Import Project File (ZIP or JSON)
         function importProjectFile(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -1144,13 +1299,17 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
                         studyData = JSON.parse(e.target.result);
                         populateInputs();
                         autoSave();
-                        showToast("Étude JSON importée !");
+                        showToast("Étude JSON importée !", "success");
                     } catch(err) {
                         showToast("Fichier JSON invalide.", "error");
                     }
                 };
                 reader.readAsText(file);
             } else if (filename.endsWith('.zip')) {
+                if (typeof JSZip === 'undefined') {
+                    showToast("Bibliothèque JSZip indisponible.", "error");
+                    return;
+                }
                 JSZip.loadAsync(file).then(function(zip) {
                     if (zip.file("etude.json")) {
                         zip.file("etude.json").async("string").then(function(content) {
@@ -1158,13 +1317,13 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
                                 studyData = JSON.parse(content);
                                 populateInputs();
                                 autoSave();
-                                showToast("Archive ZIP importée avec succès !");
+                                showToast("Archive ZIP importée avec succès !", "success");
                             } catch(err) {
-                                showToast("Erreur lors de la lecture du JSON dans le ZIP.", "error");
+                                showToast("Erreur de lecture du JSON dans le ZIP.", "error");
                             }
                         });
                     } else {
-                        showToast("Fichier 'etude.json' introuvable dans le ZIP.", "error");
+                        showToast("Fichier 'etude.json' introuvable dans l'archive.", "error");
                     }
                 }).catch(function() {
                     showToast("Impossible de lire l'archive ZIP.", "error");
@@ -1173,18 +1332,38 @@ Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seul
                 showToast("Format non supporté (utilisez .zip ou .json).", "error");
             }
 
-            event.target.value = ""; // Reset file input
+            event.target.value = "";
         }
 
         function escapeHtml(text) {
             if (!text) return "";
-            return text
+            return String(text)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
                 .replace(/>/g, "&gt;")
                 .replace(/"/g, "&quot;")
                 .replace(/'/g, "&#039;");
         }
+
+        window.onload = function() {
+            const saved = localStorage.getItem('etude_lineaire_bac');
+            if (saved) {
+                try {
+                    studyData = JSON.parse(saved);
+                } catch(e) {
+                    loadExampleBaudelaire();
+                }
+            } else {
+                loadExampleBaudelaire();
+            }
+
+            populateInputs();
+            switchTab('intro');
+
+            if (window.lucide && typeof lucide.createIcons === 'function') {
+                lucide.createIcons();
+            }
+        };
     </script>
 </body>
 </html>
