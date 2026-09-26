@@ -95,7 +95,7 @@
                 </button>
 
                 <!-- Rentrer un code -->
-                <button onclick="promptCodeInput()" title="Saisir un code (ex: 123 pour Dom Juan)" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded transition">
+                <button onclick="promptCodeInput()" title="Saisir un code" class="inline-flex items-center px-2.5 py-1 text-xs font-medium text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded transition">
                     <i class="fa-solid fa-key mr-1.5"></i>
                     <span class="hidden sm:inline">Rentrer un code</span>
                 </button>
@@ -196,22 +196,22 @@
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">3. Présentation de l'extrait</label>
-                    <textarea id="intro-extract" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Situation du passage dans l'œuvre, résumé succinct du passage (ex: Poème placé au début de la section Spleen et Idéal)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-extract" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Situation du passage dans l'œuvre, résumé succinct du passage..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">4. Mouvement littéraire et contexte</label>
-                    <textarea id="intro-movement-lit" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Symbolisme, Romantisme, Modernité poétique, contexte historique..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-movement-lit" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Classicisme, théâtralité, esthétique du libertinage..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">5. Problématique</label>
-                    <textarea id="intro-problem" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="En quoi cet extrait montre-t-il... / Dans quelle mesure le poète parvient-il à..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-problem" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="En quoi cet extrait montre-t-il... / Dans quelle mesure le discours séducteur de Dom Juan..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
 
                 <div class="bg-white p-4 rounded-lg border border-neutral-200 shadow-2xs space-y-1">
                     <label class="block text-xs font-semibold text-neutral-900">6. Annonce des mouvements du texte</label>
-                    <textarea id="intro-plan" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Dans un premier mouvement (vers 1 à 8), nous verrons... Puis dans un second mouvement (vers 9 à 16)..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
+                    <textarea id="intro-plan" rows="2" oninput="updateIntroPreview(); autoSave()" placeholder="Dans un premier mouvement, nous verrons... Puis dans un second mouvement..." class="w-full text-xs p-2.5 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none"></textarea>
                 </div>
             </div>
 
@@ -248,7 +248,7 @@
                     </h3>
                     <span class="text-[11px] text-neutral-400">Texte brut complet (extrait ou poème)</span>
                 </div>
-                <textarea id="full-text-input" oninput="autoSave()" placeholder="Saisissez ou collez ici le texte littéraire complet..." class="flex-1 w-full min-h-[400px] text-sm font-serif p-4 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none leading-relaxed bg-neutral-50/30"></textarea>
+                <textarea id="full-text-input" oninput="autoSave()" placeholder="Saisissez ou collez ici le texte littéraire complet..." class="flex-1 w-full min-h-[400px] text-sm font-serif p-4 border border-neutral-200 rounded focus:ring-1 focus:ring-neutral-900 focus:outline-none leading-relaxed bg-neutral-50/30 whitespace-pre-wrap"></textarea>
             </div>
         </div>
 
@@ -433,7 +433,6 @@
             if (!text) return "";
             let formatted = text;
 
-            // Remplacement ordonné : locutions composées d'abord, mots simples ensuite
             const replacements = [
                 { regex: /\b(point[s]?\s+de\s+suspension|trois\s+points)\b/gi, replacement: '...' },
                 { regex: /\b(point\s+d['’]\s*exclamation|point\s+d\s+exclamation)\b/gi, replacement: '!' },
@@ -455,16 +454,14 @@
                 formatted = formatted.replace(r.regex, r.replacement);
             });
 
-            // Normalisation stricte de la ponctuation et des espaces en français
             formatted = formatted
-                .replace(/\s+([,\.!\?:;])/g, '$1') // Supprime les espaces avant la ponctuation
-                .replace(/([,\.!\?:;])([^\s\d\n\.\!\?])/g, '$1 $2') // Assure un espace après la ponctuation
+                .replace(/\s+([,\.!\?:;])/g, '$1')
+                .replace(/([,\.!\?:;])([^\s\d\n\.\!\?])/g, '$1 $2')
                 .replace(/\s*«\s*/g, ' « ')
                 .replace(/\s*»\s*/g, ' » ')
                 .replace(/\(\s+/g, '(')
                 .replace(/\s+\)/g, ')');
 
-            // Majuscule automatique après un point, !, ? ou saut de ligne
             formatted = formatted.replace(/(^|[\.\!\?\n]\s*)([a-zàâæçéèêëîïôœùûüÿ])/g, (m, p1, p2) => p1 + p2.toUpperCase());
 
             return formatted;
@@ -526,15 +523,13 @@
             const currentVal = input.value;
 
             let textToInsert = text;
-            // Ajouter un espace avant le mot si on n'est pas en début de ligne ou après un espace
-            if (start > 0 && currentVal[start - 1] !== ' ' && currentVal[start - 1] !== '\n' && ! textToInsert.match(/^[,\.!\?:;]/)) {
+            if (start > 0 && currentVal[start - 1] !== ' ' && currentVal[start - 1] !== '\n' && !textToInsert.match(/^[,\.!\?:;]/)) {
                 textToInsert = ' ' + textToInsert;
             }
 
             input.value = currentVal.substring(0, start) + textToInsert + currentVal.substring(end);
             input.selectionStart = input.selectionEnd = start + textToInsert.length;
 
-            // Déclencher les évènements de mise à jour
             input.dispatchEvent(new Event('input', { bubbles: true }));
         }
 
@@ -594,7 +589,7 @@
 
         // Saisie et vérification du code
         function promptCodeInput() {
-            const code = prompt("Veuillez saisir votre code d'accès / d'étude (ex: 123 pour Dom Juan de Molière) :");
+            const code = prompt("Veuillez saisir votre code :");
             if (code === null) return; // Annulé
 
             const cleanCode = code.replace(/\s+/g, '').trim();
@@ -603,49 +598,7 @@
             } else if (cleanCode === '1' || cleanCode === '01') {
                 loadExampleBaudelaire();
             } else {
-                showToast("Code invalide. Essayez le code 123 pour charger Dom Juan.", "error");
-            }
-        }
-
-        function startSTT() {
-            if (!recognition && !initSpeechToText()) return;
-
-            try {
-                recognition.start();
-                isSTTActive = true;
-                updateSTTUI(true);
-                showToast("Dictée vocale activée ! Cliquez sur un champ et parlez.");
-            } catch(e) {
-                console.error("Erreur lancement STT:", e);
-            }
-        }
-
-        function stopSTT() {
-            isSTTActive = false;
-            if (recognition) {
-                try { recognition.stop(); } catch(e) {}
-            }
-            updateSTTUI(false);
-            showToast("Dictée vocale désactivée.", "info");
-        }
-
-        function updateSTTUI(active) {
-            const btn = document.getElementById('stt-toggle-btn');
-            const icon = document.getElementById('stt-icon');
-            const statusText = document.getElementById('stt-status-text');
-
-            if (!btn || !icon) return;
-
-            if (active) {
-                btn.classList.remove('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
-                btn.classList.add('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
-                icon.className = "fa-solid fa-microphone text-white mr-1.5";
-                if (statusText) statusText.innerText = "Dictée activée";
-            } else {
-                btn.classList.remove('bg-red-500', 'text-white', 'hover:bg-red-600', 'animate-pulse');
-                btn.classList.add('bg-neutral-100', 'text-neutral-700', 'hover:bg-neutral-200');
-                icon.className = "fa-solid fa-microphone text-neutral-500 mr-1.5";
-                if (statusText) statusText.innerText = "Dictée";
+                showToast("Code invalide.", "error");
             }
         }
 
@@ -783,7 +736,7 @@
                                 <i class="fa-solid fa-bookmark text-neutral-400 text-xs pl-2"></i>
                                 <input type="text" value="${escapeHtml(item.title)}" 
                                        oninput="updateItemField(${idx}, 'title', this.value)" 
-                                       placeholder="Nom du mouvement ou de l'axe (ex: Mouvement 1 : La chute de l'albatros)" 
+                                       placeholder="Nom du mouvement ou de l'axe..." 
                                        class="w-full bg-transparent font-mono text-xs font-bold text-white focus:outline-none placeholder-neutral-500">
                             </div>
                         </td>
@@ -797,7 +750,7 @@
                     tr.className = "hover:bg-neutral-50/60 transition";
                     tr.innerHTML = `
                         <td class="p-2 align-top">
-                            <textarea oninput="updateItemField(${idx}, 'quote', this.value)" rows="2" placeholder="Citation ou vers..." class="w-full p-2 border border-neutral-200 rounded font-serif text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.quote)}</textarea>
+                            <textarea oninput="updateItemField(${idx}, 'quote', this.value)" rows="2" placeholder="Citation ou réplique..." class="w-full p-2 border border-neutral-200 rounded font-serif text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.quote)}</textarea>
                         </td>
                         <td class="p-2 align-top">
                             <textarea oninput="updateItemField(${idx}, 'process', this.value)" rows="2" placeholder="Procédé / Figure / Syntaxe..." class="w-full p-2 border border-neutral-200 rounded text-xs focus:ring-1 focus:ring-neutral-900 focus:outline-none">${escapeHtml(item.process)}</textarea>
@@ -975,19 +928,6 @@
             showToast("Nouvelle étude vierge créée", "info");
         }
 
-        // Example Loader Selector
-        function promptExampleCode() {
-            const code = prompt("Saisissez le code de l'exemple (ex: 123 pour Dom Juan de Molière, ou appuyez sur OK pour 'L'Albatros' de Baudelaire) :");
-            if (code === null) return; // annulé
-
-            const cleanCode = code.trim();
-            if (cleanCode === '123') {
-                loadExampleDomJuan();
-            } else {
-                loadExampleBaudelaire();
-            }
-        }
-
         // Example Loader 1 : Baudelaire
         function loadExampleBaudelaire() {
             studyData = {
@@ -1019,7 +959,7 @@
             };
             populateInputs();
             autoSave();
-            showToast("Exemple 'L'Albatros' chargé !");
+            showToast("Étude chargée avec succès !");
         }
 
         // Example Loader 2 : Molière - Dom Juan (Code 123)
@@ -1029,32 +969,84 @@
                 authorWork: "Molière, Dom Juan",
                 course: "Le théâtre du XVIIe siècle : du rire aux larmes / La comédie classique",
                 intro: {
-                    author: "Molière est un comédien et dramaturge français, de son vrai nom Jean-Baptiste Poquelin. C'est un auteur de théâtre classique du XVIIe siècle. Molière critique les mœurs grâce à de nombreuses pièces comme les plus connues : Le Malade imaginaire, Les Femmes savantes, Le Tartuffe, L'Avare. Molière fonde sa propre troupe de théâtre, l'Illustre Théâtre, au service de Louis XIV. Et on inventera un nouveau type de pièce : la comédie-ballet.",
-                    work: "Dom Juan, aussi appelé Le Festin de pierre, est une pièce en prose. Elle présente l'histoire de Dom Juan, un libertin au XVIIe siècle. Le libertinage est une aptitude qui rejette les idées reçues dans le domaine politique, religieux. Il ne respecte pas les codes sociaux et la morale de son rang. Il laisse libre cours à ses désirs. Dans la pièce, Dom Juan a épousé une jeune femme, Done Elvire puis l'a abandonnée, et est donc poursuivi par ses frères. Il est accompagné de son valet, Sganarelle, et rencontre Charlotte dans cet extrait.",
-                    extract: "Charlotte est une paysanne qui parle le patois. Elle est promise à Pierrot, un paysan. Ce passage se situe à l'acte II, scène 2. Il est composé en trois parties. La première est que Dom Juan essaie de séduire Charlotte malgré ses doutes. Puis, Dom Juan promet un mariage à Charlotte. Et pour finir, Dom Juan fait des serments, ce qui convainc Charlotte.",
-                    movementLit: "Comédie classique et esthétique du libertinage au XVIIe siècle.",
-                    problem: "Comment, dans ce passage, le discours séducteur de Dom Juan masque-t-il ses véritables intentions ?",
-                    plan: "1. Dom Juan essaie de séduire Charlotte malgré ses doutes.\n2. Dom Juan promet un mariage à Charlotte.\n3. Dom Juan fait des serments, ce qui convainc Charlotte."
+                    author: "Molière (1622-1673), de son vrai nom Jean-Baptiste Poquelin, est le grand maître de la comédie classique au XVIIe siècle. Protégé de Louis XIV, il fustige les travers de la société de son temps.",
+                    work: "Dom Juan (1665) est une comédie en cinq actes et en prose. Elle met en scène un grand seigneur libertin qui défie la morale sociale, la religion et le Ciel.",
+                    extract: "Dans l'acte II, scène 2, Dom Juan aborde la jeune paysanne Charlotte pour la séduire immédiatement après avoir été sauvé d'un naufrage. Il entreprend une entreprise de séduction fondée sur le mensonge et la manipulation.",
+                    movementLit: "Classicisme et esthétique du libertinage théâtral du XVIIe siècle.",
+                    problem: "Comment la rhétorique séductrice de Dom Juan parvient-elle à surmonter les réticences morales et sociales de la jeune paysanne Charlotte ?",
+                    plan: "1. Les hésitations de Charlotte face à la méfiance populaire (premières répliques).\n2. La stratégie de culpabilisation et la promesse sacrilège du mariage (répliques centrales).\n3. L'entreprise d'éblouissement galant et la capitulation de Charlotte (dernières répliques)."
                 },
-                fullText: "CHARLOTTE : Monsieur, vous me hontevez.\nDOM JUAN : Avez-vous bien du cœur, Charlotte ? Ah ! la belle personne !\nCHARLOTTE : Je ne sais pas ce que c'est ; mais vous me faites venir une envie d'en avoir.\nDOM JUAN : Je veux vous épouser, Charlotte. Je le jure par le ciel, par tout ce qu'il y a de plus sacré !",
+                fullText: `Charlotte
+Aussi vrai, Monsieur, je ne sais comment faire quand vous parlez. Ce que vous dites me fait aise, et j'aurais toutes les envies du monde de vous croire ; mais on m'a toujou dit qu'il ne faut jamais croire les Monsieux, et que vous autres courtisans êtes des enjoleus, qui ne songez qu'à abuser les filles.
+
+Dom Juan
+Je ne suis pas de ces gens-là.
+
+Sganarelle
+Il n'a garde.
+
+Charlotte
+Voyez-vous, Monsieur, il n'y a pas plaisir à se laisser abuser. Je suis une pauvre paysanne ; mais j'ai l'honneur en recommandation, et j'aimerais mieux me voir morte, que de me voir déshonorée.
+
+Dom Juan
+Moi, j'aurais l'âme assez méchante pour abuser une personne comme vous ? Je serais assez lâche pour vous déshonorer ? Non, non : j'ai trop de conscience pour cela. Je vous aime, Charlotte, en tout bien et en tout honneur ; et pour vous montrer que je vous dis vrai, sachez que je n'ai point d'autre dessein que de vous épouser : en voulez-vous un plus grand témoignage ? M'y voilà prêt quand vous voudrez ; et je prends à témoin l'homme que voilà de la parole que je vous donne.
+
+Sganarelle
+Non, non, ne craignez point : il se mariera avec vous tant que vous voudrez.
+
+Dom Juan
+Ah ! Charlotte, je vois bien que vous ne me connaissez pas encore. Vous me faites grand tort de juger de moi par les autres ; et s'il y a des fourbes dans le monde, des gens qui ne cherchent qu'à abuser des filles, vous devez me tirer du nombre, et ne pas mettre en doute la sincérité de ma foi. Et puis votre beauté vous assure de tout. Quand on est faite comme vous, on doit être à couvert de toutes ces sortes de crainte ; vous n'avez point l'air, croyez-moi, d'une personne qu'on abuse ; et pour moi, je l'avoue, je me percerais le cœur de mille coups, si j'avais eu la moindre pensée de vous trahir.
+
+Charlotte
+Mon Dieu ! je ne sais si vous dites vrai, ou non ; mais vous faites que l'on vous croit.
+
+Dom Juan
+Lorsque vous me croirez, vous me rendrez justice assurément, et je vous réitère encore la promesse que je vous ai faite. Ne l'acceptez-vous pas, et ne voulez-vous pas consentir à être ma femme ?
+
+Charlotte
+Oui, pourvu que ma tante le veuille.
+
+Dom Juan
+Touchez donc là, Charlotte, puisque vous le voulez bien de votre part.
+
+Charlotte
+Mais au moins, Monsieur, ne m'allez pas tromper, je vous prie : il y aurait de la conscience à vous, et vous voyez comme j'y vais à la bonne foi.
+
+Dom Juan
+Comment ? Il semble que vous doutiez encore de ma sincérité ! Voulez-vous que je fasse des serments épouvantables ? Que le Ciel…
+
+Charlotte
+Mon Dieu, ne jurez point, je vous crois.
+
+Dom Juan
+Donnez-moi donc un petit baiser pour gage de votre parole.
+
+Charlotte
+Oh ! Monsieur, attendez que je soyons mariés, je vous prie ; après ça, je vous baiserai tant que vous voudrez.
+
+Dom Juan
+Eh bien ! belle Charlotte, je veux tout ce que vous voulez ; abandonnez-moi seulement votre main, et souffrez que, par mille baisers, je lui exprime le ravissement où je suis…`,
                 analysisItems: [
-                    { type: 'separator', title: '1. Dom Juan essaie de séduire Charlotte malgré ses doutes' },
-                    { type: 'process', quote: "d'où sort cette jolie paysanne... A-t-on rien vu de plus agréable ?", process: "Question rhétorique & éloge hyperbolique", effect: "Démarrage immédiat de la stratégie de séduction par la flatterie physique auprès d'une ingénue." },
-                    { type: 'process', quote: "ses yeux sont assassins !", process: "Métaphore galante de la préciosité", effect: "Dom Juan adapte les codes de la galanterie de cour pour éblouir la jeune paysanne." },
-                    { type: 'separator', title: '2. Dom Juan promet un mariage à Charlotte' },
-                    { type: 'process', quote: "Je veux vous épouser", process: "Affirmation catégorique sans nuance", effect: "Promesse disproportionnée et mensongère transgressant les règles sociales pour captiver Charlotte." },
-                    { type: 'process', quote: "Monsieur, vous me hontevez.", process: "Patois & ingénuité du langage", effect: "Traduit le décalage social et la vulnérabilité de la paysanne face au grand seigneur libertin." },
-                    { type: 'separator', title: '3. Dom Juan fait des serments, ce qui convainc Charlotte' },
-                    { type: 'process', quote: "Je le jure par le ciel, par tout ce qu'il y a de plus sacré !", process: "Serment hyperbolique & hypocrisie sacrilège", effect: "Utilisation abusive du vocabulaire sacré pour emporter l'adhésion définitive de Charlotte, révélant la duplicité libertine de Dom Juan." }
+                    { type: 'separator', title: '1. La méfiance populaire confrontée à la séduction (Premières répliques)' },
+                    { type: 'process', quote: "on m'a toujou dit qu'il ne faut jamais croire les Monsieux, et que vous autres courtisans êtes des enjoleus", process: "Grammaire populaire & Patois (« toujou », « Monsieux », « enjoleus »)", effect: "Charlotte exprime la sagesse et le soupçon du peuple face aux seigneurs libertins, tout en trahissant son ingénuité." },
+                    { type: 'process', quote: "j'aimerais mieux me voir morte, que de me voir déshonorée.", process: "Hyperbole dramatique & Antithèse (morte / déshonorée)", effect: "Souligne l'importance fondamentale de l'honneur féminin et du statut social pour une paysanne du XVIIe siècle." },
+                    { type: 'separator', title: '2. La manipulation morale et la fausse promesse de mariage' },
+                    { type: 'process', quote: "Moi, j'aurais l'âme assez méchante... ? Je serais assez lâche... ?", process: "Questions rhétoriques hyperboliques & Feinte indignation", effect: "Dom Juan fait porter la culpabilité sur Charlotte en se présentant comme injustement accusé d'immoralité." },
+                    { type: 'process', quote: "sachez que je n'ai point d'autre dessein que de vous épouser", process: "Promesse sacrilège de mariage", effect: "Révèle la monstruosité libertine de Dom Juan, prêt à commettre un faux serment religieux pour obtenir ce qu'il veut." },
+                    { type: 'process', quote: "Non, non, ne craignez point : il se mariera avec vous tant que vous voudrez.", process: "Ironie tragique et comique de Sganarelle", effect: "Sganarelle confirme le mensonge avec une ambiguïté cynique (« tant que vous voudrez » sous-entend autant de fois qu'il voudra)." },
+                    { type: 'separator', title: '3. L\'éblouissement galant et la capitulation de Charlotte' },
+                    { type: 'process', quote: "je me percerais le cœur de mille coups, si j'avais eu la moindre pensée de vous trahir.", process: "Hyperbole précieuse & Tragique théâtral", effect: "Emprunte le langage de la galanterie précieuse pour éblouir l'esprit d'une paysanne naïve." },
+                    { type: 'process', quote: "Mon Dieu ! je ne sais si vous dites vrai, ou non ; mais vous faites que l'on vous croit.", process: "Aveu d'impuissance & Victoire de la rhétorique", effect: "Consacre la victoire du discours libertin sur la raison : la séduction l'emporte sur le doute." },
+                    { type: 'process', quote: "souffrez que, par mille baisers, je lui exprime le ravissement où je suis…", process: "Glissement du verbe au geste (Langage précieux et sensuel)", effect: "Dom Juan transforme sa victoire verbale en prise de possession physique progressive." }
                 ],
                 conclusion: {
-                    summary: "Dans cette scène, le discours séducteur de Dom Juan déploie toute la rhétorique libertine. En manipulant le langage sacré et les promesses de mariage, il dissimule son désir de domination sous une fausse galanterie.",
-                    opening: "On peut rapprocher ce passage de la scène de séduction du Séducteur de Séville de Tirso de Molina ou de la scène du Tartuffe tentant de séduire Elmire."
+                    summary: "Dans cet extrait, Dom Juan déploie toutes les ressources de la rhétorique libertine. En manipulant le sentiment de culpabilité de Charlotte et en transgressant le sacrement du mariage par de faux serments, il triomphe de la résistance populaire.",
+                    opening: "Cette scène de séduction galante et hypocrite peut être rapprochée de la scène du Tartuffe de Molière cherchant à séduire Elmire, ou des Liasons dangereuses de Laclos."
                 }
             };
             populateInputs();
             autoSave();
-            showToast("Code 123 validé : Étude 'Dom Juan' chargée avec succès !");
+            showToast("Étude 'Dom Juan' chargée avec succès !");
         }
 
         // Export ZIP Functionality (using JSZip)
